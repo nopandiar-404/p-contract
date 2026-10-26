@@ -1,0 +1,880 @@
+<!-- resources/views/dashboard/index.blade.php -->
+
+
+
+<!-- resources/views/layouts/dashboard.blade.php -->
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Contract Monitoring System</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ApexCharts (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --danger-color: #7209b7;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .sidebar-brand {
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand h3 {
+            margin: 0;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .sidebar-brand .logo-icon {
+            font-size: 24px;
+            color: #4361ee;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(67, 97, 238, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            width: 24px;
+            text-align: center;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .nav-link .badge {
+            margin-left: auto;
+            background: var(--warning-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Header */
+        .top-bar {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .page-title p {
+            margin: 5px 0 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #6c757d;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--warning-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Cards */
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .stat-card.active::before { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+        .stat-card.grace::before { background: linear-gradient(90deg, #f39c12, #d35400); }
+        .stat-card.expiring::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .stat-card.expired::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .stat-card.active .stat-icon { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .stat-card.grace .stat-icon { background: linear-gradient(135deg, #f39c12, #d35400); }
+        .stat-card.expiring .stat-icon { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .stat-card.expired .stat-icon { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--dark-color);
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trend-up { color: #2ecc71; }
+        .trend-down { color: #e74c3c; }
+
+        /* Tables */
+        .data-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .table-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            border: none;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .badge-active { background: rgba(46, 204, 113, 0.1); color: #27ae60; }
+        .badge-grace { background: rgba(243, 156, 18, 0.1); color: #d35400; }
+        .badge-expiring { background: rgba(52, 152, 219, 0.1); color: #2980b9; }
+        .badge-expired { background: rgba(231, 76, 60, 0.1); color: #c0392b; }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        /* Progress Bars */
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            border-radius: 4px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .user-menu {
+                justify-content: center;
+            }
+            .stat-card {
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            max-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h3><i class="fas fa-file-contract logo-icon"></i> Contract<span style="color: #4361ee;">Monitor</span></h3>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="http://127.0.0.1:8000/dashboard" class="nav-link active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="http://127.0.0.1:8000/contracts" class="nav-link ">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Kontrak</span>
+                    <span class="badge">1</span>
+                </a>
+                
+                <a href="http://127.0.0.1:8000/clients" class="nav-link ">
+                    <i class="fas fa-users"></i>
+                    <span>Klien</span>
+                </a>
+                
+                <a href="http://127.0.0.1:8000/dashboard/grace-period" class="nav-link ">
+                    <i class="fas fa-clock"></i>
+                    <span>Masa Tenggang</span>
+                    <span class="badge">0</span>
+                </a>
+                
+                <a href="http://127.0.0.1:8000/notifications" class="nav-link ">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifikasi</span>
+                    <span class="badge">0</span>
+                </a>
+                
+                <a href="http://127.0.0.1:8000/reports" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Laporan</span>
+                </a>
+                
+                <!-- resources/views/layouts/dashboard.blade.php line 447-455 -->
+<div class="card bg-dark border-0">
+    <div class="card-body p-3">
+        <small class="text-muted">Total Kontrak</small>
+        <h5 class="mb-0">1</h5>
+        <div class="progress mt-2" style="height: 3px;">
+                        <div class="progress-bar bg-primary" style="width: 100%"></div>
+        </div>
+        <small class="text-muted">1 aktif</small>
+    </div>
+</div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar fade-in">
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p>Overview sistem monitoring kontrak</p>
+                </div>
+                
+                <div class="user-menu">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Cari kontrak..." id="searchInput">
+                    </div>
+                    
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">0</span>
+                    </button>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> Admin
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                    
+                    <button class="btn btn-primary d-lg-none" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <div class="row g-4">
+    <!-- Statistik Cards -->
+    <div class="col-xl-3 col-lg-6 col-md-6 fade-in" style="animation-delay: 0.1s">
+        <div class="stat-card active">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value" data-stat="activeContracts">1</div>
+            <div class="stat-label">Kontrak Aktif</div>
+            <div class="stat-trend">
+                <i class="fas fa-arrow-up trend-up"></i>
+                <span class="text-muted">+12% dari bulan lalu</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 fade-in" style="animation-delay: 0.2s">
+        <div class="stat-card grace">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value" data-stat="gracePeriodContracts">0</div>
+            <div class="stat-label">Dalam Masa Tenggang</div>
+            <div class="stat-trend">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                <span class="text-warning">Aman</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 fade-in" style="animation-delay: 0.3s">
+        <div class="stat-card expiring">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-value" data-stat="expiringThisMonth">0</div>
+            <div class="stat-label">Berakhir Bulan Ini</div>
+            <div class="stat-trend">
+                <i class="fas fa-bell text-info"></i>
+                <span class="text-info">Tidak ada</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 fade-in" style="animation-delay: 0.4s">
+        <div class="stat-card expired">
+            <div class="stat-icon">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-value" data-stat="expiredContracts">0</div>
+            <div class="stat-label">Kontrak Kadaluarsa</div>
+            <div class="stat-trend">
+                <i class="fas fa-arrow-down trend-down"></i>
+                <span class="text-muted">-5% dari bulan lalu</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Main Content -->
+    <div class="col-xl-8 col-lg-7 fade-in" style="animation-delay: 0.5s">
+        <!-- Chart Container -->
+        <div class="data-table mb-4">
+            <div class="table-header">
+                <h5><i class="fas fa-chart-line me-2"></i> Tren Kontrak 6 Bulan ke Depan</h5>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="updateChart('monthly')">Per Bulan</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="updateChart('quarterly')">Per Kuartal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-3">
+                <canvas id="contractsChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                        <h5>Tambah Kontrak Baru</h5>
+                        <p class="text-muted">Buat kontrak baru dengan klien</p>
+                        <a href="http://127.0.0.1:8000/contracts/create" class="btn btn-primary w-100">
+                            <i class="fas fa-plus me-2"></i> Tambah
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-export fa-3x text-success mb-3"></i>
+                        <h5>Generate Laporan</h5>
+                        <p class="text-muted">Ekspor laporan masa tenggang</p>
+                        <button class="btn btn-success w-100" onclick="generateReport()">
+                            <i class="fas fa-download me-2"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bell fa-3x text-warning mb-3"></i>
+                        <h5>Atur Notifikasi</h5>
+                        <p class="text-muted">Pengaturan reminder kontrak</p>
+                        <a href="http://127.0.0.1:8000/notifications" class="btn btn-warning w-100">
+                            <i class="fas fa-cog me-2"></i> Atur
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Widgets -->
+    <div class="col-xl-4 col-lg-5 fade-in" style="animation-delay: 0.6s">
+        <!-- Kontrak Akan Berakhir -->
+        <div class="data-table mb-4">
+            <div class="table-header">
+                <h5><i class="fas fa-hourglass-end me-2"></i> Akan Berakhir</h5>
+                <a href="http://127.0.0.1:8000/contracts" class="btn btn-sm btn-link">Lihat Semua</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Kontrak</th>
+                            <th>Klien</th>
+                            <th>Sisa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                
+                                                    <tr>
+                                <td colspan="3" class="text-center py-3">
+                                    <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                                    <p class="text-muted mb-0">Tidak ada kontrak yang akan berakhir</p>
+                                </td>
+                            </tr>
+                                            </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Notifikasi Terbaru -->
+        <div class="data-table">
+            <div class="table-header">
+                <h5><i class="fas fa-bell me-2"></i> Notifikasi Terbaru</h5>
+                <span class="badge bg-warning">0 baru</span>
+            </div>
+            <div class="p-3">
+                                    <div class="text-center py-3">
+                        <i class="fas fa-bell-slash text-muted fa-2x mb-2"></i>
+                        <p class="text-muted mb-0">Tidak ada notifikasi</p>
+                    </div>
+                                
+                            </div>
+        </div>
+    </div>
+
+    <!-- Kontrak dalam Masa Tenggang (Full Width) -->
+    <div class="col-12 fade-in" style="animation-delay: 0.7s">
+        <div class="data-table">
+            <div class="table-header">
+                <h5><i class="fas fa-exclamation-triangle me-2 text-warning"></i> Kontrak dalam Masa Tenggang</h5>
+                <a href="http://127.0.0.1:8000/dashboard/grace-period" class="btn btn-sm btn-warning">
+                    <i class="fas fa-external-link-alt me-1"></i> Lihat Detail
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>No. Kontrak</th>
+                            <th>Nama Kontrak</th>
+                            <th>Klien</th>
+                            <th>Tanggal Berakhir</th>
+                            <th>Masa Tenggang Hingga</th>
+                            <th>Sisa Hari</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                
+                                                    <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                                    <h5 class="text-muted">Tidak ada kontrak dalam masa tenggang</h5>
+                                    <p class="text-muted">Semua kontrak dalam kondisi baik</p>
+                                </td>
+                            </tr>
+                                            </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
+            
+            <!-- Footer -->
+            <footer class="mt-5 text-center text-muted">
+                <p class="mb-0">© 2026 System Information • v1.0.0</p>
+                <small>Last updated: 30 Jan 2026 15:23</small>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Mobile Menu Toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Search Functionality
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = `/contracts?search=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+
+        // Notification Bell Animation
+        const notificationBtn = document.getElementById('notificationBtn');
+        notificationBtn.addEventListener('click', function() {
+            window.location.href = "http://127.0.0.1:8000/notifications";
+        });
+
+        // Auto-refresh data every 60 seconds
+        setInterval(function() {
+            fetch('/api/dashboard/stats')
+                .then(response => response.json())
+                .then(data => {
+                    // Update stats cards
+                    updateStats(data);
+                })
+                .catch(error => console.log('Auto-refresh error:', error));
+        }, 60000);
+
+        function updateStats(data) {
+            // Update stats cards
+            document.querySelectorAll('[data-stat]').forEach(element => {
+                const stat = element.getAttribute('data-stat');
+                if (data[stat]) {
+                    element.textContent = data[stat];
+                }
+            });
+        }
+
+        // Real-time notifications with WebSocket simulation
+        function checkNewNotifications() {
+            fetch('/api/notifications/unread-count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.querySelector('.notification-badge');
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'flex';
+                        
+                        // Show notification toast
+                        if (data.count > parseInt(badge.textContent || 0)) {
+                            showNotificationToast('Anda memiliki ' + data.count + ' notifikasi baru');
+                        }
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                });
+        }
+
+        function showNotificationToast(message) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header">
+                        <i class="fas fa-bell text-primary me-2"></i>
+                        <strong class="me-auto">Notifikasi Baru</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">${message}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        // Check for new notifications every 30 seconds
+        setInterval(checkNewNotifications, 30000);
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Dark/Light mode toggle (optional)
+        const themeToggle = document.createElement('button');
+        themeToggle.className = 'btn btn-outline-secondary btn-sm ms-2';
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        themeToggle.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            this.innerHTML = document.documentElement.classList.contains('dark') 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
+        });
+        
+        document.querySelector('.user-menu .dropdown').parentNode.insertBefore(themeToggle, document.querySelector('.user-menu .dropdown'));
+    </script>
+    
+    <script>
+    // Chart Configuration
+    const ctx = document.getElementById('contractsChart').getContext('2d');
+    
+        
+    const months = ["Jan 2026","Mar 2026","Mar 2026","Apr 2026","May 2026","Jun 2026"];
+    const counts = [0,0,0,0,0,0];
+
+    const contractsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Kontrak Berakhir',
+                data: counts,
+                borderColor: '#4361ee',
+                backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#4361ee',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Rest of JavaScript code...
+</script>
+</body>
+</html>

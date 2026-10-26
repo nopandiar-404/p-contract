@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="hMAhW8LBdQxmYvFest2GQ2fCAZK5I44dCfZX3wOX">
+
+    <title>Pelindo E-Contract</title>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+
+    <!-- Scripts -->
+    <link rel="preload" as="style" href="http://127.0.0.1:8000/build/assets/app-CpEEPCb_.css" /><link rel="modulepreload" as="script" href="http://127.0.0.1:8000/build/assets/app-B2npNE4S.js" /><link rel="stylesheet" href="http://127.0.0.1:8000/build/assets/app-CpEEPCb_.css" /><script type="module" src="http://127.0.0.1:8000/build/assets/app-B2npNE4S.js"></script>                        <link rel="stylesheet" href="http://127.0.0.1:8000/css/login.css">
+                <style>
+            /* Background slider styles */
+            .login-promo {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .promo-bg {
+                position: absolute;
+                inset: 0;
+                z-index: 0;
+            }
+
+            .promo-bg .slide {
+                position: absolute;
+                inset: 0;
+                background-size: cover;
+                background-position: center;
+                transition: opacity .8s ease;
+                opacity: 0;
+            }
+
+            .promo-bg .slide.active {
+                opacity: 1;
+            }
+
+            .slide-controls {
+                position: relative;
+                z-index: 2;
+            }
+
+            .slide-controls .btn {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            }
+
+            .promo-inner {
+                position: relative;
+                z-index: 1;
+            }
+        </style>
+    </head>
+
+<body>
+
+    <main class="py-4">
+            
+    <div class="login-page">
+        <main class="login-container" aria-labelledby="loginHeading">
+            <aside class="login-promo" aria-hidden="true">
+                
+                <div class="promo-bg" aria-hidden="true">
+                    <div class="slide active" data-bg="http://127.0.0.1:8000/images/slide1.svg"></div>
+                    <div class="slide" data-bg="http://127.0.0.1:8000/images/slide2.svg"></div>
+                    <div class="slide" data-bg="http://127.0.0.1:8000/images/slide3.svg"></div>
+                </div>
+                <div class="promo-inner">
+                    <div class="promo-logo">
+                        
+                    </div>
+                    <h2 class="promo-title">Kelola Kontrak<br>Lebih Efisien</h2>
+                    <p class="promo-desc">Sistem monitoring kontrak terintegrasi untuk memantau masa
+                        tenggang, mengirim
+                        notifikasi, dan mengelola semua kontrak bisnis Anda di satu tempat.</p>
+
+                    <ul class="promo-features">
+                        <li><span class="dot">✓</span> Monitoring Real-time</li>
+                        <li><span class="dot">🔔</span> Notifikasi Otomatis</li>
+                        <li><span class="dot">🔒</span> Keamanan Terjamin</li>
+                        <li><span class="dot">📊</span> Analitik Lengkap</li>
+                    </ul>
+
+
+
+                    <div id="promoAria" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+
+
+                    
+                </div>
+                
+            </aside>
+
+            <section class="login-card auth-card" role="region" aria-label="Login form">
+                <header class="brand center">
+                    <img src="http://127.0.0.1:8000/build/images/logo-pelindo.png" alt="Pelindo Logo" width="120" height="auto"
+                        onerror="this.onerror=null;this.src='http://127.0.0.1:8000/build/images/logo.svg'" class="brand-logo" />
+                    <h1 id="loginHeading" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Selamat Datang Kembali</h1>
+                    <p class="muted">Silakan masuk ke akun Anda</p>
+                </header>
+
+                <form method="POST" action="http://127.0.0.1:8000/login" class="login-form" novalidate>
+                    <input type="hidden" name="_token" value="hMAhW8LBdQxmYvFest2GQ2fCAZK5I44dCfZX3wOX" autocomplete="off">
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <div class="control">
+                            <input id="email" name="email" type="email" inputmode="email" required
+                                value="" placeholder="Masukkan email Anda"
+                                class="input " aria-describedby="emailHelp">
+                        </div>
+                                            </div>
+
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <div class="control password-control">
+                            <input id="password" name="password" type="password" required
+                                placeholder="Masukkan password Anda" class="input "
+                                aria-describedby="pwdHelp">
+
+                        </div>
+                        
+                                            </div>
+
+                    <div class="form-actions">
+                        <label class="remember">
+                            <input type="checkbox" name="remember" >
+                            <span>Ingat Saya</span>
+                        </label>
+
+                                                    <a class="link-muted" href="http://127.0.0.1:8000/password/reset">Lupa Password?</a>
+                                            </div>
+
+                    <button type="submit" class="btn primary">Masuk</button>
+
+                    <div class="divider"><span>atau</span></div>
+
+                    <div class="login-footer muted">Belum punya akun? <a href="http://127.0.0.1:8000/register">Daftar Sekarang</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    
+    
+    </main>
+    </div>
+                        <script src="http://127.0.0.1:8000/js/login.js" defer></script>
+                <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const slides = Array.from(document.querySelectorAll('.promo-bg .slide'));
+                if (!slides.length) return;
+
+                // Collect image URLs from data-bg attributes rendered via asset()
+                const slideImages = slides.map(s => s.getAttribute('data-bg')).filter(Boolean);
+
+                // preload images
+                slideImages.forEach(src => {
+                    const i = new Image();
+                    i.src = src;
+                });
+
+                // initialize slides with provided images
+                slides.forEach((s, i) => {
+                    const bg = s.getAttribute('data-bg') || '';
+                    if (bg) s.style.backgroundImage = `url('${bg}')`;
+                });
+
+                let currentIndex = slides.findIndex(s => s.classList.contains('active'));
+                if (currentIndex < 0) currentIndex = 0;
+
+                let intervalId = null;
+                const delay = 5000;
+
+                function showIndex(nextIndex) {
+                    slides.forEach((s, i) => {
+                        if (i === nextIndex) s.classList.add('active');
+                        else s.classList.remove('active');
+                    });
+                    currentIndex = nextIndex;
+                }
+
+                function next() {
+                    const ni = (currentIndex + 1) % slides.length;
+                    showIndex(ni);
+                }
+
+                function start() {
+                    stop();
+                    intervalId = setInterval(next, delay);
+                    const btn = document.getElementById('slidePlayPause');
+                    if (btn) {
+                        btn.textContent = 'Pause';
+                        btn.setAttribute('aria-pressed', 'false');
+                    }
+                }
+
+                function stop() {
+                    if (intervalId) clearInterval(intervalId);
+                    intervalId = null;
+                    const btn = document.getElementById('slidePlayPause');
+                    if (btn) {
+                        btn.textContent = 'Play';
+                        btn.setAttribute('aria-pressed', 'true');
+                    }
+                }
+
+                // wire play/pause button
+                const playBtn = document.getElementById('slidePlayPause');
+                const prevBtn = document.getElementById('slidePrev');
+                const nextBtn = document.getElementById('slideNext');
+                const indicatorsWrap = document.getElementById('slideIndicators');
+                const ariaEl = document.getElementById('promoAria');
+
+                // build indicators
+                if (indicatorsWrap) {
+                    slides.forEach((s, i) => {
+                        const dot = document.createElement('button');
+                        dot.className = 'btn btn-sm';
+                        dot.type = 'button';
+                        dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+                        dot.dataset.index = i;
+                        dot.textContent = i === currentIndex ? '●' : '○';
+                        dot.addEventListener('click', () => {
+                            showIndex(i);
+                            if (intervalId) {
+                                stop();
+                                start();
+                            }
+                            updateIndicators();
+                            announce();
+                        });
+                        indicatorsWrap.appendChild(dot);
+                    });
+                }
+
+                function updateIndicators() {
+                    if (!indicatorsWrap) return;
+                    Array.from(indicatorsWrap.children).forEach((btn, idx) => {
+                        btn.textContent = idx === currentIndex ? '●' : '○';
+                    });
+                }
+
+                function announce() {
+                    if (!ariaEl) return;
+                    const slide = slides[currentIndex];
+                    const bg = slide.getAttribute('data-bg') || '';
+                    ariaEl.textContent = 'Slide ' + (currentIndex + 1) + ' of ' + slides.length + (bg ? (
+                        ', background image loaded') : '');
+                }
+
+                if (prevBtn) prevBtn.addEventListener('click', () => {
+                    stop();
+                    showIndex((currentIndex - 1 + slides.length) % slides.length);
+                    updateIndicators();
+                    announce();
+                });
+                if (nextBtn) nextBtn.addEventListener('click', () => {
+                    stop();
+                    showIndex((currentIndex + 1) % slides.length);
+                    updateIndicators();
+                    announce();
+                });
+
+                if (playBtn) {
+                    playBtn.addEventListener('click', function() {
+                        if (intervalId) {
+                            stop();
+                        } else {
+                            start();
+                        }
+                    });
+                }
+
+                // start auto-rotation
+                start();
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </body>
+
+</html>

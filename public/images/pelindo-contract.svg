@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="80" viewBox="0 0 400 80" role="img" aria-labelledby="title">
+  <title id="title">Pelindo E-Contract</title>
+  <rect x="4" y="10" width="58" height="58" rx="14" fill="#0879bd"/>
+  <path d="M20 22h19l9 9v25H20z" fill="#fff"/>
+  <path d="M39 22v10h9M26 40h16M26 47h13" fill="none" stroke="#0879bd" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
+  <path d="m27 54 4 4 8-8" fill="none" stroke="#20b4d1" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  <text x="78" y="57" fill="#0879bd" font-family="Arial, sans-serif" font-size="48" font-weight="700">PELINDO</text>
+</svg>
