@@ -1,0 +1,101 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="g0wOh1AuJKedLPFoysF0aYOeFdPInsLZ8MnFZhS9">
+
+    <title>Pelindo E-Contract</title>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+
+    <!-- Scripts -->
+    <link rel="preload" as="style" href="http://127.0.0.1:8000/build/assets/app-CpEEPCb_.css" />
+    <link rel="modulepreload" as="script" href="http://127.0.0.1:8000/build/assets/app-B2npNE4S.js" />
+    <link rel="stylesheet" href="http://127.0.0.1:8000/build/assets/app-CpEEPCb_.css" />
+    <script type="module" src="http://127.0.0.1:8000/build/assets/app-B2npNE4S.js"></script>
+    <link rel="stylesheet" href="http://127.0.0.1:8000/css/login.css">
+</head>
+
+<body>
+    <main class="py-4">
+
+        <div class="login-page">
+            <main class="login-container" aria-labelledby="loginHeading">
+                <aside class="login-promo" aria-hidden="true">
+                    <div class="promo-inner">
+                        <div class="promo-logo">
+
+                        </div>
+                        <h2 class="promo-title">Kelola Kontrak<br>Lebih Efisien</h2>
+                        <p class="promo-desc">Sistem monitoring kontrak terintegrasi untuk memantau masa tenggang, mengirim notifikasi, dan mengelola semua kontrak bisnis Anda di satu tempat.</p>
+
+                        <ul class="promo-features">
+                            <li><span class="dot">✓</span> Monitoring Real-time</li>
+                            <li><span class="dot">🔔</span> Notifikasi Otomatis</li>
+                            <li><span class="dot">🔒</span> Keamanan Terjamin</li>
+                            <li><span class="dot">📊</span> Analitik Lengkap</li>
+                        </ul>
+
+
+                    </div>
+
+                </aside>
+
+                <section class="login-card auth-card" role="region" aria-label="Login form">
+                    <header class="brand center">
+                        <img src="http://127.0.0.1:8000/build/images/logo-pelindo.png" alt="Pelindo Logo" width="120" height="auto" onerror="this.onerror=null;this.src='http://127.0.0.1:8000/build/images/logo.svg'" class="brand-logo" />
+                        <h1 id="loginHeading" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Selamat Datang Kembali</h1>
+                        <p class="muted">Silakan masuk ke akun Anda</p>
+                    </header>
+
+                    <form method="POST" action="http://127.0.0.1:8000/login" class="login-form" novalidate>
+                        <input type="hidden" name="_token" value="g0wOh1AuJKedLPFoysF0aYOeFdPInsLZ8MnFZhS9" autocomplete="off">
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <div class="control">
+                                <input id="email" name="email" type="email" inputmode="email" required value="" placeholder="Masukkan email Anda" class="input " aria-describedby="emailHelp">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="password">Password</label>
+                            <div class="control password-control">
+                                <input id="password" name="password" type="password" required placeholder="Masukkan password Anda" class="input " aria-describedby="pwdHelp">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-actions">
+                            <label class="remember">
+                            <input type="checkbox" name="remember" >
+                            <span>Ingat Saya</span>
+                        </label>
+
+                            <a class="link-muted" href="http://127.0.0.1:8000/password/reset">Lupa Password?</a>
+                        </div>
+
+                        <button type="submit" class="btn primary">Masuk</button>
+
+                        <div class="divider"><span>atau</span></div>
+
+                        <div class="login-footer muted">Belum punya akun? <a href="http://127.0.0.1:8000/register">Daftar Sekarang</a>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+
+    </main>
+    </div>
+    <script src="http://127.0.0.1:8000/js/login.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>
