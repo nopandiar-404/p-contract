@@ -29,7 +29,11 @@
                             <p class="text-muted small mb-3">Lengkapi nama, nomor, deskripsi, dan jenis kontrak ini.</p>
 
                             <div class="row">
+<<<<<<< HEAD
                                 <div class="col-md-4 mb-3">
+=======
+                                <div class="col-md-6 mb-3">
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                     <label for="contract_number" class="form-label fw-semibold">
                                         <i class="fas fa-hashtag text-danger me-1"></i> Nomor Kontrak <span
                                             class="text-danger">*</span>
@@ -49,6 +53,7 @@
                                     <small class="form-text text-muted">Format: CTR-XXX-YYYY</small>
                                 </div>
 
+<<<<<<< HEAD
                                 <div class="col-md-4 mb-3">
                                     <label for="nomor_surat" class="form-label fw-semibold">
                                         <i class="fas fa-envelope-open-text text-secondary me-1"></i> Nomor Surat
@@ -63,6 +68,9 @@
                                 </div>
 
                                 <div class="col-md-4 mb-3">
+=======
+                                <div class="col-md-6 mb-3">
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                     <label for="contract_name" class="form-label">
                                         <i class="fas fa-file-signature text-primary me-1"></i> Nama Kontrak <span
                                             class="text-danger">*</span>
@@ -126,6 +134,7 @@
                                 </small>
                             </div>
 
+<<<<<<< HEAD
                             <!-- Nilai Kontrak Per Tahun -->
                             <div class="mb-4 p-3 bg-light rounded-3 border">
                                 <h6 class="fw-semibold mb-2 text-primary">
@@ -287,6 +296,8 @@
                                 </div>
                             </div>
 
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                             @php
                                 $boqRows = old('boq_items', [['description' => '', 'unit' => '', 'quantity' => '', 'unit_price' => '']]);
                             @endphp
@@ -635,6 +646,7 @@
             document.getElementById('contractForm').addEventListener('reset', () => setTimeout(refreshBoq, 0));
             refreshBoq();
         })();
+<<<<<<< HEAD
 
         // Auto-calculate Jumlah (Tahun I + Tahun II), PPN (11%), & Total (Jumlah + PPN)
         (function() {
@@ -665,6 +677,8 @@
             if (form) form.addEventListener('reset', () => setTimeout(updateJumlahDisplay, 0));
             updateJumlahDisplay();
         })();
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
     </script>
     <script>
         // Client Info Display

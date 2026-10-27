@@ -48,6 +48,7 @@ class ContractController extends Controller
             ->select([
                 'id',
                 'contract_number',
+<<<<<<< HEAD
                 'nomor_surat',
                 'contract_name',
                 'contract_term',
@@ -63,6 +64,10 @@ class ContractController extends Controller
                 'payment_status',
                 'payment_date',
                 'keterangan',
+=======
+                'contract_name',
+                'contract_term',
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                 'client_id',
                 'contract_type',
                 'dpp',
@@ -90,7 +95,10 @@ class ContractController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('contract_number', 'like', "%{$search}%")
+<<<<<<< HEAD
                     ->orWhere('nomor_surat', 'like', "%{$search}%")
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                     ->orWhere('contract_name', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%")
                     ->orWhereHas('client', function ($clientQuery) use ($search) {
@@ -117,7 +125,11 @@ class ContractController extends Controller
         }
 
         // Sort and pagination normalization
+<<<<<<< HEAD
         $allowedSorts = ['contract_number', 'nomor_surat', 'contract_name', 'start_date', 'end_date', 'status', 'created_at', 'updated_at', 'tahun_1', 'tahun_2', 'jumlah', 'ppn', 'total', 'pr', 'po', 'ttb', 'berita_acara', 'payment_status', 'payment_date'];
+=======
+        $allowedSorts = ['contract_number', 'contract_name', 'start_date', 'end_date', 'status', 'created_at', 'updated_at'];
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         $sort = trim((string) $request->input('sort', 'created_at'));
         $order = strtolower(trim((string) $request->input('order', 'desc')));
 
@@ -196,7 +208,10 @@ class ContractController extends Controller
                 'max:100',
                 Rule::unique('contracts', 'contract_number')
             ],
+<<<<<<< HEAD
             'nomor_surat' => 'nullable|string|max:10000',
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             'contract_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'client_id' => 'required|exists:clients,id',
@@ -207,6 +222,7 @@ class ContractController extends Controller
             'termination_reason' => 'nullable|string|max:500',
             'status' => 'required|in:active,grace_period,expired,terminated',
             'contract_term' => 'nullable|in:termin_1,termin_2,termin_3,termin_4',
+<<<<<<< HEAD
             'tahun_1' => 'nullable|numeric|min:0',
             'tahun_2' => 'nullable|numeric|min:0',
             'pr' => 'nullable|numeric',
@@ -216,6 +232,8 @@ class ContractController extends Controller
             'payment_status' => 'nullable|in:SUDAH BAYAR,BELUM BAYAR',
             'payment_date' => 'nullable|date',
             'keterangan' => 'nullable|string|max:1000',
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             'contract_type' => ['required', Rule::in(array_keys(config('contract_types.types', [])))],
             'dpp' => 'nullable|numeric|min:0',
             'boq_items' => 'nullable|array|max:500',
@@ -252,6 +270,7 @@ class ContractController extends Controller
             // Buat kontrak
             $currentUser = Auth::user();
             $client = Client::find($validated['client_id']);
+<<<<<<< HEAD
             $t1 = isset($validated['tahun_1']) && $validated['tahun_1'] !== '' ? (float)$validated['tahun_1'] : null;
             $t2 = isset($validated['tahun_2']) && $validated['tahun_2'] !== '' ? (float)$validated['tahun_2'] : null;
             $jml = ($t1 !== null || $t2 !== null) ? (($t1 ?? 0) + ($t2 ?? 0)) : null;
@@ -261,6 +280,10 @@ class ContractController extends Controller
             $contract = Contract::create([
                 'contract_number' => $validated['contract_number'],
                 'nomor_surat' => $validated['nomor_surat'] ?? null,
+=======
+            $contract = Contract::create([
+                'contract_number' => $validated['contract_number'],
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                 'contract_name' => $validated['contract_name'],
                 'client_id' => $validated['client_id'],
                 'vendor_name' => $client?->name,
@@ -274,6 +297,7 @@ class ContractController extends Controller
                 'termination_reason' => $validated['termination_reason'] ?? null,
                 'status' => $validated['status'],
                 'contract_term' => $validated['contract_term'] ?? null,
+<<<<<<< HEAD
                 'tahun_1' => $t1,
                 'tahun_2' => $t2,
                 'jumlah' => $jml,
@@ -286,6 +310,8 @@ class ContractController extends Controller
                 'payment_status' => $validated['payment_status'] ?? 'BELUM BAYAR',
                 'payment_date' => $validated['payment_date'] ?? null,
                 'keterangan' => $validated['keterangan'] ?? null,
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                 'created_by' => $userId,
                 'account_name' => $currentUser ? $currentUser->name : ($systemUser->name ?? null),
                 'account_position' => $currentUser ? ($currentUser->position ?? null) : null,
@@ -706,7 +732,10 @@ class ContractController extends Controller
                 'max:100',
                 Rule::unique('contracts', 'contract_number')->ignore($contract->id)
             ],
+<<<<<<< HEAD
             'nomor_surat' => 'nullable|string|max:10000',
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             'contract_name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'client_id' => 'required|exists:clients,id',
@@ -717,6 +746,7 @@ class ContractController extends Controller
             'termination_reason' => 'nullable|string|max:500',
             'status' => 'required|in:active,grace_period,expired,terminated',
             'contract_term' => 'nullable|in:termin_1,termin_2,termin_3,termin_4',
+<<<<<<< HEAD
             'tahun_1' => 'nullable|numeric|min:0',
             'tahun_2' => 'nullable|numeric|min:0',
             'pr' => 'nullable|numeric',
@@ -726,6 +756,8 @@ class ContractController extends Controller
             'payment_status' => 'nullable|in:SUDAH BAYAR,BELUM BAYAR',
             'payment_date' => 'nullable|date',
             'keterangan' => 'nullable|string|max:1000',
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             'contract_type' => ['required', Rule::in(array_keys(config('contract_types.types', [])))],
             'dpp' => 'nullable|numeric|min:0',
             'boq_items' => 'nullable|array|max:500',
@@ -749,6 +781,7 @@ class ContractController extends Controller
             $contractData = $validated;
             unset($contractData['boq_items'], $contractData['pdf_files'], $contractData['remove_pdf_files']);
 
+<<<<<<< HEAD
             $t1 = isset($contractData['tahun_1']) && $contractData['tahun_1'] !== '' && $contractData['tahun_1'] !== null ? (float)$contractData['tahun_1'] : null;
             $t2 = isset($contractData['tahun_2']) && $contractData['tahun_2'] !== '' && $contractData['tahun_2'] !== null ? (float)$contractData['tahun_2'] : null;
             $contractData['tahun_1'] = $t1;
@@ -765,6 +798,8 @@ class ContractController extends Controller
             $contractData['payment_date'] = isset($contractData['payment_date']) && $contractData['payment_date'] !== '' ? $contractData['payment_date'] : null;
             $contractData['keterangan'] = isset($contractData['keterangan']) && $contractData['keterangan'] !== '' ? $contractData['keterangan'] : null;
 
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             // Ensure only allowed fields are updated
             $contract->update(array_merge($contractData, [
                 'vendor_name' => $client?->name,
@@ -1201,7 +1236,11 @@ class ContractController extends Controller
 
         // Build base query (reuse filters like index)
         $query = Contract::with(['client', 'creator'])
+<<<<<<< HEAD
             ->select(['id', 'contract_number', 'nomor_surat', 'contract_name', 'contract_type', 'contract_term', 'client_id', 'tahun_1', 'tahun_2', 'jumlah', 'ppn', 'total', 'pr', 'po', 'ttb', 'berita_acara', 'keterangan', 'payment_status', 'payment_date', 'start_date', 'end_date', 'status', 'created_at'])
+=======
+            ->select(['id', 'contract_number', 'contract_name', 'contract_type', 'client_id', 'start_date', 'end_date', 'status', 'created_at'])
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             ->when($request->has('status') && $request->status != 'all', function ($q) use ($request) {
                 return $q->where('status', $request->status);
             })
@@ -1238,6 +1277,7 @@ class ContractController extends Controller
 
                 $callback = function () use ($contracts) {
                     $out = fopen('php://output', 'w');
+<<<<<<< HEAD
                     fputcsv($out, ['Contract Number', 'Nomor Surat', 'Contract Name', 'Client', 'Jenis Kontrak', 'Tahun I', 'Tahun II', 'Jumlah', 'PPN (11%)', 'Total', 'PR', 'PO', 'TTB', 'Berita Acara', 'Keterangan', 'Status Pembayaran', 'Start Date', 'End Date', 'Status', 'Created At']);
 
                     foreach ($contracts as $c) {
@@ -1260,6 +1300,16 @@ class ContractController extends Controller
                             $c->berita_acara ?? '',
                             $ketFull ?: ($c->keterangan ?? ''),
                             $c->payment_status ?? 'BELUM BAYAR',
+=======
+                    fputcsv($out, ['Contract Number', 'Contract Name', 'Client', 'Jenis Kontrak', 'Start Date', 'End Date', 'Status', 'Created At']);
+
+                    foreach ($contracts as $c) {
+                        fputcsv($out, [
+                            $c->contract_number,
+                            $c->contract_name,
+                            optional($c->client)->name ?? '',
+                            config('contract_types.types.' . $c->contract_type . '.name', ''),
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                             $c->start_date ? $c->start_date->format('Y-m-d') : '',
                             $c->end_date ? $c->end_date->format('Y-m-d') : '',
                             $c->status,
@@ -1283,6 +1333,7 @@ class ContractController extends Controller
                     $sheet = $spreadsheet->getActiveSheet();
 
                     // Header row
+<<<<<<< HEAD
                     $sheet->fromArray(['Contract Number', 'Nomor Surat', 'Contract Name', 'Client', 'Jenis Kontrak', 'Tahun I', 'Tahun II', 'Jumlah', 'PPN (11%)', 'Total', 'PR', 'PO', 'TTB', 'Berita Acara', 'Keterangan', 'Status Pembayaran', 'Start Date', 'End Date', 'Status', 'Created At'], NULL, 'A1');
 
                     $row = 2;
@@ -1309,12 +1360,31 @@ class ContractController extends Controller
                         $sheet->setCellValue('R' . $row, $c->end_date ? $c->end_date->format('Y-m-d') : '');
                         $sheet->setCellValue('S' . $row, $c->status);
                         $sheet->setCellValue('T' . $row, $c->created_at ? $c->created_at->format('Y-m-d H:i:s') : '');
+=======
+                    $sheet->fromArray(['Contract Number', 'Contract Name', 'Client', 'Jenis Kontrak', 'Start Date', 'End Date', 'Status', 'Created At'], NULL, 'A1');
+
+                    $row = 2;
+                    foreach ($contracts as $c) {
+                        $sheet->setCellValue('A' . $row, $c->contract_number);
+                        $sheet->setCellValue('B' . $row, $c->contract_name);
+                        $sheet->setCellValue('C' . $row, optional($c->client)->name ?? '');
+                        $sheet->setCellValue('D' . $row, config('contract_types.types.' . $c->contract_type . '.name', ''));
+                        $sheet->setCellValue('E' . $row, $c->start_date ? $c->start_date->format('Y-m-d') : '');
+                        $sheet->setCellValue('F' . $row, $c->end_date ? $c->end_date->format('Y-m-d') : '');
+                        $sheet->setCellValue('G' . $row, $c->status);
+                        $sheet->setCellValue('H' . $row, $c->created_at ? $c->created_at->format('Y-m-d H:i:s') : '');
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                         $row++;
                     }
 
                     // Style: bold header + autosize columns
+<<<<<<< HEAD
                     $sheet->getStyle('A1:T1')->getFont()->setBold(true);
                     foreach (range('A', 'T') as $col) {
+=======
+                    $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+                    foreach (range('A', 'H') as $col) {
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                         $sheet->getColumnDimension($col)->setAutoSize(true);
                     }
 
@@ -1333,6 +1403,7 @@ class ContractController extends Controller
 
                 $callback = function () use ($contracts) {
                     $out = fopen('php://output', 'w');
+<<<<<<< HEAD
                     fputcsv($out, ['Contract Number', 'Nomor Surat', 'Contract Name', 'Client', 'Jenis Kontrak', 'Tahun I', 'Tahun II', 'Jumlah', 'PPN (11%)', 'Total', 'PR', 'PO', 'TTB', 'Berita Acara', 'Keterangan', 'Status Pembayaran', 'Start Date', 'End Date', 'Status', 'Created At']);
 
                     foreach ($contracts as $c) {
@@ -1355,6 +1426,16 @@ class ContractController extends Controller
                             $c->berita_acara ?? '',
                             $ketFull ?: ($c->keterangan ?? ''),
                             $c->payment_status ?? 'BELUM BAYAR',
+=======
+                    fputcsv($out, ['Contract Number', 'Contract Name', 'Client', 'Jenis Kontrak', 'Start Date', 'End Date', 'Status', 'Created At']);
+
+                    foreach ($contracts as $c) {
+                        fputcsv($out, [
+                            $c->contract_number,
+                            $c->contract_name,
+                            optional($c->client)->name ?? '',
+                            config('contract_types.types.' . $c->contract_type . '.name', ''),
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                             $c->start_date ? $c->start_date->format('Y-m-d') : '',
                             $c->end_date ? $c->end_date->format('Y-m-d') : '',
                             $c->status,
@@ -1663,7 +1744,10 @@ class ContractController extends Controller
             ->get([
                 'id',
                 'contract_number',
+<<<<<<< HEAD
                 'nomor_surat',
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                 'contract_name',
                 'status',
                 'start_date',

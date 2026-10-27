@@ -1189,7 +1189,10 @@
     </script>
 
     @yield('scripts')
+<<<<<<< HEAD
     @stack('scripts')
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
         <div id="flashSuccessMessage" data-message="{{ session('success') }}" hidden></div>

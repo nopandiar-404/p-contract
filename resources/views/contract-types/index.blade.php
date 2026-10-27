@@ -4,6 +4,7 @@
 @section('subtitle', 'Kategori kontrak yang tersedia')
 
 @section('content')
+<<<<<<< HEAD
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
             <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
@@ -32,16 +33,24 @@
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+=======
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             <div>
                 <h5 class="mb-1"><i class="fas fa-layer-group text-primary me-2"></i>Jenis Kontrak</h5>
                 <small class="text-muted">Jenis yang dapat dipilih pada setiap kontrak.</small>
             </div>
+<<<<<<< HEAD
             <div class="d-flex align-items-center gap-2">
                 <span class="badge bg-primary px-3 py-2 fs-7">{{ count($contractTypes) }} jenis</span>
                 <button type="button" class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#modalAddContractType">
                     <i class="fas fa-plus me-1"></i> Tambah
                 </button>
             </div>
+=======
+            <span class="badge bg-primary">{{ count($contractTypes) }} jenis</span>
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -50,6 +59,7 @@
                         <th style="width: 70px">No.</th>
                         <th>Jenis Kontrak</th>
                         <th>Deskripsi</th>
+<<<<<<< HEAD
                         <th style="width: 170px" class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -84,10 +94,23 @@
                             <td colspan="4" class="text-center py-4 text-muted">Belum ada jenis kontrak.</td>
                         </tr>
                     @endforelse
+=======
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($contractTypes as $type)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td><span class="badge bg-primary-subtle text-primary border">{{ $type['name'] }}</span></td>
+                            <td>{{ $type['description'] }}</td>
+                        </tr>
+                    @endforeach
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                 </tbody>
             </table>
         </div>
     </div>
+<<<<<<< HEAD
 
     <!-- Modal Tambah Jenis Kontrak -->
     <div class="modal fade" id="modalAddContractType" tabindex="-1" aria-labelledby="modalAddContractTypeLabel" aria-hidden="true">
@@ -181,3 +204,6 @@
     });
 </script>
 @endpush
+=======
+@endsection
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8

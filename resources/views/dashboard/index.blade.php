@@ -1091,6 +1091,7 @@
             let currentChartPeriod = 'monthly';
 
             function updateContractsChart(labels, values) {
+<<<<<<< HEAD
                 if (!Array.isArray(labels) || !Array.isArray(values)) return;
                 const numValues = values.map(v => Number(v) || 0);
 
@@ -1102,15 +1103,26 @@
                     if (contractsChart.options && contractsChart.options.scales && contractsChart.options.scales.y) {
                         contractsChart.options.scales.y.suggestedMax = Math.max(...numValues, 0) + 1;
                     }
+=======
+                if (contractsChart) {
+                    contractsChart.data.labels = labels;
+                    contractsChart.data.datasets[0].data = values;
+                    contractsChart.options.scales.y.suggestedMax = Math.max(...values.map(Number), 0) + 1;
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                     contractsChart.update();
                     return;
                 }
 
+<<<<<<< HEAD
                 renderFallbackLineChart(chartCanvas, labels, numValues);
+=======
+                renderFallbackLineChart(chartCanvas, labels, values);
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             }
 
             async function fetchTimeSeries(period) {
                 try {
+<<<<<<< HEAD
                     const url = "{{ route('reports.distribution') }}?period=" + encodeURIComponent(period);
                     const res = await fetch(url, {
                         headers: {
@@ -1134,6 +1146,18 @@
                     const json = await res.json();
                     if (!json || !json.success || !json.data) {
                         console.warn('Data chart tidak valid dari server:', json);
+=======
+                    const res = await fetch(`/reports/distribution?period=${encodeURIComponent(period)}`, {
+                        credentials: 'include'
+                    });
+                    if (!res.ok) {
+                        showToast('Gagal memuat data chart', 'error');
+                        return;
+                    }
+                    const json = await res.json();
+                    if (!json || !json.success || !json.data) {
+                        showToast('Data chart tidak valid', 'error');
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                         return;
                     }
 
@@ -1152,7 +1176,12 @@
                         return;
                     }
                 } catch (err) {
+<<<<<<< HEAD
                     console.error('Kesalahan saat memuat data chart:', err);
+=======
+                    console.error(err);
+                    showToast('Kesalahan saat memuat chart', 'error');
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                 }
             }
 
@@ -1160,6 +1189,7 @@
                 if (!['monthly', 'quarterly'].includes(period)) period = 'monthly';
                 currentChartPeriod = period;
                 const btn = document.getElementById('contractsChartPeriodBtn');
+<<<<<<< HEAD
                 if (btn) {
                     const labelSpan = btn.querySelector('.period-label');
                     if (labelSpan) labelSpan.textContent = period === 'monthly' ? 'Per Bulan' : 'Per Kuartal';
@@ -1168,14 +1198,25 @@
             }
 
             // Initialize chart
+=======
+                if (btn) btn.querySelector('.period-label').textContent = period === 'monthly' ? 'Per Bulan' : 'Per Kuartal';
+                fetchTimeSeries(period);
+            }
+
+            // Initialize chart: request server time-series
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('[data-progress-width]').forEach(progressBar => {
                     const width = Number(progressBar.dataset.progressWidth);
                     progressBar.style.width = `${Math.min(100, Math.max(0, width))}%`;
                 });
 
+<<<<<<< HEAD
                 // Chart awal sudah dirender langsung dengan data default (monthly) dari server HTML
                 // fetchTimeSeries dipanggil hanya saat user memilih filter periode
+=======
+                changeChartPeriod(currentChartPeriod);
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             });
 
             document.querySelectorAll('.dashboard-send-reminder').forEach(button => {
