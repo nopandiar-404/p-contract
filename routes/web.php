@@ -101,11 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/boq', [BoqController::class, 'index'])->name('boq.index');
     Route::resource('clients', ClientController::class);
     Route::resource('notifications', NotificationController::class)->only(['index', 'show']);
-<<<<<<< HEAD
     Route::resource('contract-types', ContractTypeController::class)->except(['show', 'create', 'edit']);
-=======
-    Route::get('/contract-types', [ContractTypeController::class, 'index'])->name('contract-types.index');
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
 
     // Chart of Accounts (Jenis COA)
     Route::resource('coa', CoaController::class);

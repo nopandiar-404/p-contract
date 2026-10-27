@@ -387,7 +387,6 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h4 class="mb-1">{{ $contract->contract_name }}</h4>
-<<<<<<< HEAD
                             <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
                                 <h5 class="text-primary mb-0">#{{ $contract->contract_number }}</h5>
                                 @if($contract->nomor_surat)
@@ -396,9 +395,6 @@
                                     </span>
                                 @endif
                             </div>
-=======
-                            <h5 class="text-primary mb-3">#{{ $contract->contract_number }}</h5>
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                             <div class="d-flex align-items-center gap-2">
                                 {!! $contract->getStatusBadgeAttribute() !!}
                                 @if ($contract->status === 'grace_period')
@@ -525,13 +521,10 @@
                                     <td>#{{ $contract->contract_number }}</td>
                                 </tr>
                                 <tr>
-<<<<<<< HEAD
                                     <td><strong>Nomor Surat</strong></td>
                                     <td>{{ $contract->nomor_surat ?? '-' }}</td>
                                 </tr>
                                 <tr>
-=======
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                     <td><strong>Nama Kontrak</strong></td>
                                     <td>{{ $contract->contract_name }}</td>
                                 </tr>
@@ -692,7 +685,6 @@
                                     </tr>
                                 @endif
 
-<<<<<<< HEAD
                                 @if ($contract->tahun_1 !== null)
                                     <tr>
                                         <td width="40%"><strong>Tahun I</strong></td>
@@ -769,8 +761,6 @@
                                     </tr>
                                 @endif
 
-=======
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                 @if ($contract->actual_end_date)
                                     <tr>
                                         <td width="40%"><strong>Tanggal Berakhir Aktual</strong></td>

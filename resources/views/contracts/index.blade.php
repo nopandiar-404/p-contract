@@ -6,7 +6,6 @@
 
 @section('content')
     <style>
-<<<<<<< HEAD
         /* Ukuran font tabel diperbesar secara proporsional untuk keseluruhan tulisan */
         #contractsTable,
         .responsive-contract-table {
@@ -119,10 +118,6 @@
             color: #0d6efd !important;
             border: 1px solid #0d6efd !important;
             font-weight: 700 !important;
-=======
-        .responsive-contract-table td {
-            vertical-align: middle;
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         }
 
         .responsive-contract-table tbody tr.contract-row-selected > td {
@@ -157,11 +152,7 @@
             border-radius: 999px;
             background: #eff8fb;
             color: #17647b;
-<<<<<<< HEAD
             font-size: 14px;
-=======
-            font-size: 0.8125rem;
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             font-weight: 600;
             line-height: 1;
             white-space: nowrap;
@@ -169,11 +160,7 @@
 
         .contract-term-badge i {
             color: #2386a1;
-<<<<<<< HEAD
             font-size: 13px;
-=======
-            font-size: 0.75rem;
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         }
 
         .contract-page-actions {
@@ -488,7 +475,6 @@
                 overflow-wrap: anywhere;
             }
 
-<<<<<<< HEAD
             .responsive-contract-table .col-nomor-surat,
             .responsive-contract-table td[data-label="Nomor Surat"],
             .responsive-contract-table .col-nama-kontrak,
@@ -500,8 +486,6 @@
                 width: 100% !important;
             }
 
-=======
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             .responsive-contract-table tbody td.contract-selection-cell {
                 display: flex !important;
                 align-items: center;
@@ -515,10 +499,7 @@
             .responsive-contract-table td[data-label]:before {
                 content: attr(data-label);
                 font-weight: 700;
-<<<<<<< HEAD
                 font-size: 14px;
-=======
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                 color: #495057;
                 display: block;
                 width: auto;
@@ -1203,7 +1184,6 @@
                                             @endif
                                         </a>
                                     </th>
-<<<<<<< HEAD
                                     <th class="col-nomor-surat">
                                         <a href="{{ request()->fullUrlWithQuery(['sort' => 'nomor_surat', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
                                             class="text-decoration-none text-dark d-flex align-items-center text-nowrap">
@@ -1217,9 +1197,6 @@
                                     </th>
                                     <th class="col-nama-kontrak">Nama Kontrak</th>
                                     <th>Tanggal</th>
-=======
-                                    <th>Nama Kontrak</th>
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                     <th>Jenis Kontrak</th>
                                     <th>Termin Kontrak</th>
                                     <th>Vendor</th>
@@ -1227,7 +1204,6 @@
                                         <th>Pemilik</th>
                                     @endif
                                     <th>Total BOQ</th>
-<<<<<<< HEAD
                                     <th>
                                         <a href="{{ request()->fullUrlWithQuery(['sort' => 'tahun_1', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
                                             class="text-decoration-none text-dark d-flex align-items-center text-nowrap">
@@ -1328,9 +1304,6 @@
                                         </a>
                                     </th>
                                     <th>Keterangan</th>
-=======
-                                    <th>Tanggal</th>
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                     <th>
                                         <a href="{{ request()->fullUrlWithQuery(['sort' => 'status', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
                                             class="text-decoration-none text-dark d-flex align-items-center">
@@ -1376,7 +1349,6 @@
                                                 </div>
                                             </div>
                                         </td>
-<<<<<<< HEAD
                                         <td data-label="Nomor Surat" class="col-nomor-surat">
                                             @if ($contract->nomor_surat)
                                                 <span class="fw-semibold text-dark">{!! nl2br(e($contract->nomor_surat)) !!}</span>
@@ -1385,9 +1357,6 @@
                                             @endif
                                         </td>
                                         <td data-label="Nama Kontrak" class="col-nama-kontrak">
-=======
-                                        <td data-label="Nama Kontrak">
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                             <a href="{{ route('contracts.show', $contract) }}"
                                                 class="text-decoration-none text-dark fw-semibold">
                                                 {{ $contract->contract_name }}
@@ -1395,7 +1364,6 @@
                                             @if ($contract->description)
                                                 <br>
                                                 <small class="text-muted">
-<<<<<<< HEAD
                                                     {{ Str::limit($contract->description, 80) }}
                                                 </small>
                                             @endif
@@ -1418,12 +1386,6 @@
                                                 </div>
                                             </div>
                                         </td>
-=======
-                                                    {{ Str::limit($contract->description, 50) }}
-                                                </small>
-                                            @endif
-                                        </td>
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                         <td data-label="Jenis Kontrak">
                                             @if ($contract->contract_type)
                                                 <span class="badge bg-primary-subtle text-primary border">
@@ -1495,7 +1457,6 @@
                                                 <span class="text-muted">-</span>
                                             @endif
                                         </td>
-<<<<<<< HEAD
                                         <td data-label="Tahun I" class="text-nowrap">
                                             @if ($contract->tahun_1 !== null)
                                                 <span class="badge bg-white text-primary border border-primary fw-bold" style="font-size: 15px;">Rp {{ number_format($contract->tahun_1, 0, ',', '.') }}</span>
@@ -1612,24 +1573,6 @@
                                                 @if ($contract->keterangan)
                                                     <small class="text-secondary mt-1">{{ $contract->keterangan }}</small>
                                                 @endif
-=======
-                                        <td data-label="Tanggal">
-                                            <div class="d-flex flex-column">
-                                                <div class="mb-1">
-                                                    <small class="text-muted d-block">Mulai</small>
-                                                    <span class="badge bg-light text-dark border">
-                                                        <i class="fas fa-play text-success me-1"></i>
-                                                        {{ $contract->start_date->format('d/m/Y') }}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <small class="text-muted d-block">Berakhir</small>
-                                                    <span class="badge bg-light text-dark border">
-                                                        <i class="fas fa-stop text-danger me-1"></i>
-                                                        {{ $contract->end_date->format('d/m/Y') }}
-                                                    </span>
-                                                </div>
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                             </div>
                                         </td>
                                         <td data-label="Status">
@@ -1714,35 +1657,12 @@
                                                     aria-label="Hapus kontrak {{ $contract->contract_name }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-<<<<<<< HEAD
-=======
-                                                {{-- Gmail Reminder Button --}}
-                                                @if($contract->client && ($contract->client->email || $contract->client->pic_email))
-                                                <button type="button"
-                                                    class="btn btn-gmail-reminder"
-                                                    style="background:#ea4335;border-color:#ea4335;color:#fff;"
-                                                    title="Kirim Reminder Gmail"
-                                                    data-bs-toggle="tooltip"
-                                                    data-contract-id="{{ $contract->id }}"
-                                                    data-contract-number="{{ $contract->contract_number }}"
-                                                    data-contract-name="{{ $contract->contract_name }}"
-                                                    data-client-email="{{ $contract->client->pic_email ?? $contract->client->email }}"
-                                                    data-send-url="{{ route('contracts.send-gmail-reminder', $contract) }}"
-                                                    aria-label="Kirim reminder Gmail untuk kontrak {{ $contract->contract_number }}">
-                                                    <i class="fab fa-google"></i>
-                                                </button>
-                                                @endif
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-<<<<<<< HEAD
                                         <td colspan="{{ (auth()->user() && auth()->user()->role === 'admin') ? 22 : 21 }}" class="text-center py-5">
-=======
-                                        <td colspan="{{ (auth()->user() && auth()->user()->role === 'admin') ? 11 : 10 }}" class="text-center py-5">
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
                                             <div class="text-muted">
                                                 <i class="fas fa-file-contract fa-3x mb-3"></i>
                                                 <h4 class="h5">Tidak ada data kontrak</h4>
@@ -2680,11 +2600,7 @@
             }
 
             .table-responsive {
-<<<<<<< HEAD
                 font-size: 0.95rem;
-=======
-                font-size: 0.875rem;
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
             }
 
             .contract-icon {

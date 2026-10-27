@@ -1189,6 +1189,7 @@
     </script>
 
     <?php echo $__env->yieldContent('scripts'); ?>
+    <?php echo $__env->yieldPushContent('scripts'); ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php if(session('success')): ?>
         <div id="flashSuccessMessage" data-message="<?php echo e(session('success')); ?>" hidden></div>
