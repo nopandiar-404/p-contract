@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
 use App\Models\Contract;
 use App\Models\ContractType;
 use Illuminate\Http\Request;
@@ -27,7 +26,7 @@ class ContractTypeController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
@@ -35,12 +34,11 @@ class ContractTypeController extends Controller
         if (empty($baseSlug)) {
             $baseSlug = 'type_' . time();
         }
-        $slug = $baseSlug;
+        $slug    = $baseSlug;
         $counter = 1;
         while (ContractType::where('slug', $slug)->exists()) {
             $slug = $baseSlug . '_' . $counter++;
         }
-
         $data['slug'] = $slug;
 
         ContractType::create($data);
@@ -53,12 +51,12 @@ class ContractTypeController extends Controller
         $contractType = ContractType::findOrFail($id);
 
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
         $contractType->update([
-            'name' => $data['name'],
+            'name'        => $data['name'],
             'description' => $data['description'] ?? null,
         ]);
 
@@ -72,7 +70,8 @@ class ContractTypeController extends Controller
         $contractCount = Contract::where('contract_type', $contractType->slug)->count();
 
         if ($contractCount > 0) {
-            return redirect()->route('contract-types.index')->with('error', "Jenis kontrak '{$contractType->name}' tidak dapat dihapus karena masih digunakan oleh {$contractCount} data kontrak.");
+            return redirect()->route('contract-types.index')
+                ->with('error', "Jenis kontrak '{$contractType->name}' tidak dapat dihapus karena masih digunakan oleh {$contractCount} data kontrak.");
         }
 
         $contractType->delete();
@@ -80,14 +79,3 @@ class ContractTypeController extends Controller
         return redirect()->route('contract-types.index')->with('success', 'Jenis kontrak berhasil dihapus.');
     }
 }
-=======
-class ContractTypeController extends Controller
-{
-    public function index()
-    {
-        return view('contract-types.index', [
-            'contractTypes' => config('contract_types.types', []),
-        ]);
-    }
-}
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8

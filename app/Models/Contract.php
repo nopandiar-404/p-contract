@@ -15,10 +15,7 @@ class Contract extends Model
 
     protected $fillable = [
         'contract_number',
-<<<<<<< HEAD
         'nomor_surat',
-=======
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         'contract_name',
         'contract_type',
         'client_id',
@@ -30,7 +27,6 @@ class Contract extends Model
         'end_date',
         'status',
         'contract_term',
-<<<<<<< HEAD
         'tahun_1',
         'tahun_2',
         'jumlah',
@@ -43,40 +39,31 @@ class Contract extends Model
         'payment_status',
         'payment_date',
         'keterangan',
-=======
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         'grace_period_days',
         'actual_end_date',
         'termination_reason',
         'pdf_files',
         'created_by',
         'account_name',
-        'account_position'
+        'account_position',
     ];
 
-    // Gunakan $casts untuk date fields (lebih modern dari $dates)
     protected $casts = [
-        'dpp' => 'decimal:2',
-<<<<<<< HEAD
-        'tahun_1' => 'decimal:2',
-        'tahun_2' => 'decimal:2',
-        'jumlah' => 'decimal:2',
-        'ppn' => 'decimal:2',
-        'total' => 'decimal:2',
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'actual_end_date' => 'date',
-        'payment_date' => 'date',
-=======
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'actual_end_date' => 'date',
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'dpp'            => 'decimal:2',
+        'tahun_1'        => 'decimal:2',
+        'tahun_2'        => 'decimal:2',
+        'jumlah'         => 'decimal:2',
+        'ppn'            => 'decimal:2',
+        'total'          => 'decimal:2',
+        'start_date'     => 'date',
+        'end_date'       => 'date',
+        'actual_end_date'=> 'date',
+        'payment_date'   => 'date',
+        'created_at'     => 'datetime',
+        'updated_at'     => 'datetime',
+        'deleted_at'     => 'datetime',
         'grace_period_days' => 'integer',
-        'pdf_files' => 'array',
+        'pdf_files'      => 'array',
     ];
 
     protected $appends = [
@@ -86,10 +73,11 @@ class Contract extends Model
         'remaining_grace_period_days',
         'status_badge',
         'priority',
-        'duration_in_days' // Tambahkan ini
+        'duration_in_days',
     ];
 
-    // Relationships
+    // ─── Relationships ────────────────────────────────────────────────────────
+
     public function client()
     {
         return $this->belongsTo(Client::class);
@@ -115,8 +103,8 @@ class Contract extends Model
         return $this->hasMany(ContractBoqItem::class);
     }
 
-    // Accessors
-<<<<<<< HEAD
+    // ─── Accessors ────────────────────────────────────────────────────────────
+
     public function getJumlahAttribute($value)
     {
         if ($value !== null) {
@@ -135,7 +123,7 @@ class Contract extends Model
         }
         $jumlah = $this->jumlah;
         if ($jumlah !== null) {
-            return round((float)$jumlah * 0.11, 2);
+            return round((float) $jumlah * 0.11, 2);
         }
         return null;
     }
@@ -147,26 +135,22 @@ class Contract extends Model
         }
         $jumlah = $this->jumlah;
         if ($jumlah !== null) {
-            $ppn = $this->ppn ?? round((float)$jumlah * 0.11, 2);
-            return round((float)$jumlah + (float)$ppn, 2);
+            $ppn = $this->ppn ?? round((float) $jumlah * 0.11, 2);
+            return round((float) $jumlah + (float) $ppn, 2);
         }
         return null;
     }
 
-=======
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
     public function getDaysRemainingAttribute()
     {
         if (in_array($this->status, ['expired', 'terminated'])) {
             return 0;
         }
-
         try {
             $endDate = $this->actual_end_date ?? $this->end_date;
             if (!$endDate) return 0;
-
             $days = Carbon::now()->diffInDays(Carbon::parse($endDate), false);
-            return max(0, $days); // Pastikan tidak negatif
+            return max(0, $days);
         } catch (\Exception $e) {
             return 0;
         }
@@ -177,7 +161,6 @@ class Contract extends Model
         if ($this->status !== 'grace_period') {
             return false;
         }
-
         try {
             $gracePeriodEnd = Carbon::parse($this->end_date)->addDays($this->grace_period_days);
             return Carbon::now()->lte($gracePeriodEnd);
@@ -201,18 +184,16 @@ class Contract extends Model
         if ($this->status !== 'grace_period') {
             return 0;
         }
-
         try {
             if (!$this->end_date) return 0;
             $gracePeriodEnd = Carbon::parse($this->end_date)->addDays($this->grace_period_days ?? 30);
-            $remainingDays = Carbon::now()->diffInDays($gracePeriodEnd, false);
+            $remainingDays  = Carbon::now()->diffInDays($gracePeriodEnd, false);
             return max(0, $remainingDays);
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    // Tambahkan accessor untuk durasi kontrak
     public function getDurationInDaysAttribute()
     {
         try {
@@ -223,7 +204,8 @@ class Contract extends Model
         }
     }
 
-    // Scopes
+    // ─── Scopes ───────────────────────────────────────────────────────────────
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', 'active');
@@ -251,7 +233,6 @@ class Contract extends Model
         return $query->where('status', 'terminated');
     }
 
-    // Scope untuk pencarian
     public function scopeSearch(Builder $query, string $search): Builder
     {
         return $query->where(function (Builder $q) use ($search) {
@@ -265,7 +246,8 @@ class Contract extends Model
         });
     }
 
-    // Business Logic Methods
+    // ─── Business Logic ───────────────────────────────────────────────────────
+
     public function canRenew()
     {
         return in_array($this->status, ['active', 'grace_period'])
@@ -282,100 +264,93 @@ class Contract extends Model
         return false;
     }
 
-    // Status Badge dengan HTML escape
     public function getStatusBadgeAttribute()
     {
         $badges = [
-            'active' => ['color' => 'success', 'text' => 'Aktif', 'icon' => 'check-circle'],
-            'grace_period' => ['color' => 'warning', 'text' => 'Masa Tenggang', 'icon' => 'clock'],
-            'expired' => ['color' => 'danger', 'text' => 'Kadaluarsa', 'icon' => 'times-circle'],
-            'terminated' => ['color' => 'secondary', 'text' => 'Dihentikan', 'icon' => 'ban']
+            'active'       => ['color' => 'success',   'text' => 'Aktif',        'icon' => 'check-circle'],
+            'grace_period' => ['color' => 'warning',   'text' => 'Masa Tenggang','icon' => 'clock'],
+            'expired'      => ['color' => 'danger',    'text' => 'Kadaluarsa',   'icon' => 'times-circle'],
+            'terminated'   => ['color' => 'secondary', 'text' => 'Dihentikan',   'icon' => 'ban'],
         ];
 
         $status = $this->status;
-        $badge = $badges[$status] ?? ['color' => 'secondary', 'text' => ucfirst($status), 'icon' => 'question-circle'];
+        $badge  = $badges[$status] ?? ['color' => 'secondary', 'text' => ucfirst($status), 'icon' => 'question-circle'];
 
-        // Gunakan e() untuk escape HTML
-        $html = '<span class="badge bg-' . e($badge['color']) . '">';
+        $html  = '<span class="badge bg-' . e($badge['color']) . '">';
         $html .= '<i class="fas fa-' . e($badge['icon']) . ' me-1"></i>';
         $html .= e($badge['text']) . '</span>';
 
         return $html;
     }
 
-    // Priority dengan status yang lebih detail
     public function getPriorityAttribute()
     {
         if ($this->status === 'grace_period') {
             $remainingDays = $this->remaining_grace_period_days;
             if ($remainingDays < 3) {
-                return ['level' => 'high', 'text' => 'Tinggi', 'color' => 'danger'];
+                return ['level' => 'high',   'text' => 'Tinggi', 'color' => 'danger'];
             } elseif ($remainingDays < 7) {
                 return ['level' => 'medium', 'text' => 'Sedang', 'color' => 'warning'];
             } else {
-                return ['level' => 'low', 'text' => 'Rendah', 'color' => 'info'];
+                return ['level' => 'low',    'text' => 'Rendah', 'color' => 'info'];
             }
         }
 
         if ($this->status === 'active') {
             $daysRemaining = $this->days_remaining;
             if ($daysRemaining < 7) {
-                return ['level' => 'high', 'text' => 'Tinggi', 'color' => 'danger'];
+                return ['level' => 'high',   'text' => 'Tinggi', 'color' => 'danger'];
             } elseif ($daysRemaining < 14) {
                 return ['level' => 'medium', 'text' => 'Sedang', 'color' => 'warning'];
             } elseif ($daysRemaining < 30) {
-                return ['level' => 'low', 'text' => 'Rendah', 'color' => 'info'];
+                return ['level' => 'low',    'text' => 'Rendah', 'color' => 'info'];
             }
         }
 
         return ['level' => 'none', 'text' => 'Normal', 'color' => 'secondary'];
     }
 
-    // Boot method untuk event handlers
+    // ─── Boot ─────────────────────────────────────────────────────────────────
+
     protected static function boot()
     {
         parent::boot();
 
-        // Auto-generate contract number jika kosong
         static::creating(function ($contract) {
             if (empty($contract->contract_number)) {
                 $contract->contract_number = self::generateContractNumber();
             }
-
-            // Set created_by jika kosong
             if (empty($contract->created_by) && Auth::check()) {
                 $contract->created_by = Auth::id();
             }
         });
 
-<<<<<<< HEAD
-        // Auto-update status berdasarkan tanggal dan hitung jumlah tahun, PPN (11% * Jumlah), dan Total (Jumlah + PPN)
         static::saving(function ($contract) {
             $contract->updateStatusBasedOnDate();
+
+            // Hitung jumlah dari tahun_1 + tahun_2
             if ($contract->tahun_1 !== null || $contract->tahun_2 !== null) {
-                $contract->jumlah = (float)($contract->tahun_1 ?? 0) + (float)($contract->tahun_2 ?? 0);
+                $contract->jumlah = (float) ($contract->tahun_1 ?? 0) + (float) ($contract->tahun_2 ?? 0);
             }
+
+            // Hitung PPN (11%) dan Total otomatis
             if ($contract->jumlah !== null) {
-                $contract->ppn = round((float)$contract->jumlah * 0.11, 2);
-                $contract->total = round((float)$contract->jumlah + (float)$contract->ppn, 2);
+                $contract->ppn   = round((float) $contract->jumlah * 0.11, 2);
+                $contract->total = round((float) $contract->jumlah + (float) $contract->ppn, 2);
             } else {
-                $contract->ppn = null;
+                $contract->ppn   = null;
                 $contract->total = null;
             }
-=======
-        // Auto-update status berdasarkan tanggal
-        static::saving(function ($contract) {
-            $contract->updateStatusBasedOnDate();
->>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         });
     }
 
-    // Method untuk generate contract number
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
     public static function generateContractNumber()
     {
-        $prefix = 'CTR';
-        $year = date('Y');
-        $month = date('m');
+        $prefix   = 'CTR';
+        $year     = date('Y');
+        $month    = date('m');
         $sequence = static::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->count() + 1;
@@ -383,15 +358,14 @@ class Contract extends Model
         return sprintf('%s-%s%s-%04d', $prefix, $year, $month, $sequence);
     }
 
-    // Method untuk update status otomatis berdasarkan tanggal
     public function updateStatusBasedOnDate()
     {
         if ($this->status === 'terminated') {
             return;
         }
 
-        $now = Carbon::now();
-        $endDate = Carbon::parse($this->end_date);
+        $now           = Carbon::now();
+        $endDate       = Carbon::parse($this->end_date);
         $actualEndDate = $this->actual_end_date ? Carbon::parse($this->actual_end_date) : null;
 
         if ($actualEndDate && $actualEndDate->lt($now)) {
@@ -401,18 +375,14 @@ class Contract extends Model
 
         if ($endDate->lt($now)) {
             $gracePeriodEnd = $endDate->copy()->addDays($this->grace_period_days ?? 30);
-
-            if ($gracePeriodEnd->gte($now)) {
-                $this->status = 'grace_period';
-            } else {
-                $this->status = 'expired';
-            }
+            $this->status   = $gracePeriodEnd->gte($now) ? 'grace_period' : 'expired';
         } else {
             $this->status = 'active';
         }
     }
 
-    // Formatted attributes
+    // ─── Formatted Attributes ─────────────────────────────────────────────────
+
     public function getFormattedStartDateAttribute()
     {
         return $this->start_date ? $this->start_date->format('d/m/Y') : '-';
