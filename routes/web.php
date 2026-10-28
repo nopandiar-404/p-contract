@@ -71,6 +71,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/gmail/watch', [GmailWebhookController::class, 'watch'])->name('gmail.watch');
     Route::post('/gmail/stop', [GmailWebhookController::class, 'stop'])->name('gmail.stop');
     Route::get('/gmail/watch/status', [GmailWebhookController::class, 'status'])->name('gmail.watch.status');
+
+    // Gmail OAuth authorization and callback routes
+    Route::get('/gmail/oauth', [GmailAuthController::class, 'redirect'])->name('gmail.oauth');
+    Route::get('/gmail/callback', [GmailAuthController::class, 'callback'])->name('gmail.callback');
+
     Route::post('/contracts/{contract}/terminate', [ContractController::class, 'terminate'])
         ->name('contracts.terminate');
     Route::get('/contracts/statistics', [ContractController::class, 'statistics'])
@@ -177,9 +182,7 @@ Route::middleware('auth')->group(function () {
             }
         })->name('dev.contracts.delete');
 
-        // Gmail OAuth helper to obtain refresh token (local only)
-        Route::get('/gmail/oauth', [GmailAuthController::class, 'redirect'])->name('gmail.oauth');
-        Route::get('/gmail/callback', [GmailAuthController::class, 'callback'])->name('gmail.callback');
+        // Gmail OAuth routes are registered in the authenticated routes above.
     }
 });
 

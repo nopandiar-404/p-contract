@@ -10,6 +10,7 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $query = ContractNotification::with(['contract.client'])
+            ->whereHas('contract')
             ->orderBy('created_at', 'desc');
 
         // Filter berdasarkan status
@@ -71,11 +72,14 @@ class NotificationController extends Controller
         $notification->load(['contract.client', 'contract.creator']);
 
         $html = view('notifications.partials.detail-modal', compact('notification'))->render();
+        $contractUrl = $notification->contract
+            ? route('contracts.show', $notification->contract)
+            : null;
 
         return response()->json([
             'success' => true,
             'html' => $html,
-            'contract_url' => route('contracts.show', $notification->contract)
+            'contract_url' => $contractUrl,
         ]);
     }
 

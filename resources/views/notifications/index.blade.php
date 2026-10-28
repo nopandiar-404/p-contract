@@ -271,6 +271,7 @@
                             @foreach ($notifications as $notification)
                                 @php
                                     $notifData = $notification->data ?? [];
+                                    $contract = $notification->contract;
                                     $statusText = 'Menunggu';
                                     $statusClass = 'text-muted';
                                     if (!empty($notification->sent_date) || !empty($notifData['sent'])) {
@@ -332,7 +333,7 @@
                                                     {{ $notification->created_at->diffForHumans() }}
                                                     •
                                                     <i class="fas fa-file-contract me-1"></i>
-                                                    {{ $notification->contract->contract_number }}
+                                                    {{ $contract?->contract_number ?? 'Kontrak tidak tersedia' }}
                                                 </small>
                                                 <div class="mt-1">
                                                     <small id="notification-status-{{ $notification->id }}"
@@ -350,10 +351,12 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('contracts.show', $notification->contract) }}">
-                                                        <i class="fas fa-external-link-alt me-2"></i> Lihat Kontrak
-                                                    </a>
+                                                    @if ($contract)
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('contracts.show', $contract) }}">
+                                                            <i class="fas fa-external-link-alt me-2"></i> Lihat Kontrak
+                                                        </a>
+                                                    @endif
                                                 </li>
                                                 @if (!$notification->is_read)
                                                     <li>
@@ -383,19 +386,19 @@
                                         <div class="d-flex align-items-center">
                                             <small class="me-3">
                                                 <i class="fas fa-user-circle me-1"></i>
-                                                {{ $notification->contract->contract_name }}
+                                                {{ $contract?->contract_name ?? 'Kontrak tidak tersedia' }}
                                             </small>
                                             <small class="me-3">
                                                 <i class="fas fa-building me-1"></i>
-                                                {{ $notification->contract->client->name }}
+                                                {{ $contract?->client?->name ?? '-' }}
                                             </small>
-                                            @if ($notification->contract->status === 'grace_period')
+                                            @if ($contract?->status === 'grace_period')
                                                 <small>
                                                     <i class="fas fa-hourglass-end me-1 text-danger"></i>
                                                     @php
                                                         $graceEnd = \Carbon\Carbon::parse(
-                                                            $notification->contract->end_date,
-                                                        )->addDays($notification->contract->grace_period_days);
+                                                            $contract->end_date,
+                                                        )->addDays($contract->grace_period_days);
                                                         $remainingDays = \Carbon\Carbon::now()->diffInDays(
                                                             $graceEnd,
                                                             false,
@@ -416,10 +419,12 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                            <a href="{{ route('contracts.show', $notification->contract) }}"
-                                                class="btn btn-sm btn-primary">
-                                                <i class="fas fa-eye me-1"></i> Lihat Detail
-                                            </a>
+                                            @if ($contract)
+                                                <a href="{{ route('contracts.show', $contract) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-eye me-1"></i> Lihat Detail
+                                                </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
