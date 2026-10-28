@@ -1,4 +1,4 @@
-<!-- resources/views/contracts/edit.blade.php -->
+﻿<!-- resources/views/contracts/edit.blade.php -->
 
 
 <?php $__env->startSection('title', 'Edit Kontrak'); ?>
@@ -597,11 +597,17 @@ unset($__errorArgs, $__bag); ?>
                                         </thead>
                                         <tbody id="boqRows">
                                             <?php $__currentLoopData = $boqRows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <?php
+                                                    $quantityValue = (string) ($item['quantity'] ?? '');
+                                                    $unitPriceValue = (string) ($item['unit_price'] ?? '');
+                                                    $quantityValue = str_contains($quantityValue, '.') ? rtrim(rtrim($quantityValue, '0'), '.') : $quantityValue;
+                                                    $unitPriceValue = str_contains($unitPriceValue, '.') ? rtrim(rtrim($unitPriceValue, '0'), '.') : $unitPriceValue;
+                                                ?>
                                                 <tr class="boq-row">
                                                     <td><input class="form-control form-control-sm boq-field" data-field="description" name="boq_items[<?php echo e($index); ?>][description]" value="<?php echo e($item['description'] ?? ''); ?>" maxlength="255" aria-label="Uraian item BOQ"></td>
                                                     <td><input class="form-control form-control-sm boq-field" data-field="unit" name="boq_items[<?php echo e($index); ?>][unit]" value="<?php echo e($item['unit'] ?? ''); ?>" maxlength="30" aria-label="Satuan BOQ" placeholder="m2"></td>
-                                                    <td><input class="form-control form-control-sm boq-field" data-field="quantity" name="boq_items[<?php echo e($index); ?>][quantity]" value="<?php echo e($item['quantity'] ?? ''); ?>" type="number" min="0.001" step="0.001" aria-label="Kuantitas BOQ"></td>
-                                                    <td><input class="form-control form-control-sm boq-field" data-field="unit_price" name="boq_items[<?php echo e($index); ?>][unit_price]" value="<?php echo e($item['unit_price'] ?? ''); ?>" type="number" min="0" step="0.01" aria-label="Harga satuan BOQ"></td>
+                                                    <td><input class="form-control form-control-sm boq-field" data-field="quantity" name="boq_items[<?php echo e($index); ?>][quantity]" value="<?php echo e($quantityValue); ?>" type="number" min="1" step="1" aria-label="Kuantitas BOQ"></td>
+                                                    <td><input class="form-control form-control-sm boq-field" data-field="unit_price" name="boq_items[<?php echo e($index); ?>][unit_price]" value="<?php echo e($unitPriceValue); ?>" type="number" min="0" step="1" aria-label="Harga satuan BOQ"></td>
                                                     <td class="text-end text-nowrap"><span class="boq-subtotal">Rp 0</span></td>
                                                     <td><button type="button" class="btn btn-sm btn-outline-danger remove-boq-row" aria-label="Hapus item BOQ"><i class="fas fa-trash"></i></button></td>
                                                 </tr>
@@ -1080,7 +1086,7 @@ unset($__errorArgs, $__bag); ?>
                 const index = rows.querySelectorAll('.boq-row').length;
                 const row = document.createElement('tr');
                 row.className = 'boq-row';
-                row.innerHTML = `<td><input class="form-control form-control-sm boq-field" data-field="description" name="boq_items[${index}][description]" maxlength="255" aria-label="Uraian item BOQ"></td><td><input class="form-control form-control-sm boq-field" data-field="unit" name="boq_items[${index}][unit]" maxlength="30" aria-label="Satuan BOQ" placeholder="m2"></td><td><input class="form-control form-control-sm boq-field" data-field="quantity" name="boq_items[${index}][quantity]" type="number" min="0.001" step="0.001" aria-label="Kuantitas BOQ"></td><td><input class="form-control form-control-sm boq-field" data-field="unit_price" name="boq_items[${index}][unit_price]" type="number" min="0" step="0.01" aria-label="Harga satuan BOQ"></td><td class="text-end text-nowrap"><span class="boq-subtotal">Rp 0</span></td><td><button type="button" class="btn btn-sm btn-outline-danger remove-boq-row" aria-label="Hapus item BOQ"><i class="fas fa-trash"></i></button></td>`;
+                row.innerHTML = `<td><input class="form-control form-control-sm boq-field" data-field="description" name="boq_items[${index}][description]" maxlength="255" aria-label="Uraian item BOQ"></td><td><input class="form-control form-control-sm boq-field" data-field="unit" name="boq_items[${index}][unit]" maxlength="30" aria-label="Satuan BOQ" placeholder="m2"></td><td><input class="form-control form-control-sm boq-field" data-field="quantity" name="boq_items[${index}][quantity]" type="number" min="1" step="1" aria-label="Kuantitas BOQ"></td><td><input class="form-control form-control-sm boq-field" data-field="unit_price" name="boq_items[${index}][unit_price]" type="number" min="0" step="1" aria-label="Harga satuan BOQ"></td><td class="text-end text-nowrap"><span class="boq-subtotal">Rp 0</span></td><td><button type="button" class="btn btn-sm btn-outline-danger remove-boq-row" aria-label="Hapus item BOQ"><i class="fas fa-trash"></i></button></td>`;
                 rows.appendChild(row);
                 reindexRows();
                 row.querySelector('[data-field="description"]').focus();

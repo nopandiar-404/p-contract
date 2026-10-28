@@ -66,6 +66,85 @@
             font-size: 0.95rem;
         }
 
+        .contract-detail-page .contract-status-actions {
+            row-gap: 0.45rem !important;
+        }
+
+        .contract-detail-page .contract-status-actions .badge {
+            margin-bottom: 0;
+        }
+
+        .contract-detail-page .contract-list-button {
+            min-height: 28px;
+            padding: 0.3rem 0.65rem;
+            line-height: 1;
+        }
+
+        .contract-detail-page .contract-identity-row {
+            display: grid;
+            grid-template-columns: max-content minmax(0, 1fr);
+            align-items: baseline;
+            gap: 0.5rem 0.75rem;
+            min-width: 0;
+        }
+
+        .contract-detail-page .contract-identity-label {
+            color: #d8edff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .contract-detail-page .contract-identity-value {
+            min-width: 0;
+            color: #fff;
+            overflow-wrap: anywhere;
+        }
+
+        .contract-detail-page .contract-letter-number {
+            width: 100%;
+            display: block;
+            padding: 0.15rem 0 0.35rem 0;
+            margin-bottom: 0.25rem;
+            border-radius: 5px;
+            background: #fff;
+            color: var(--contract-navy);
+            box-sizing: border-box;
+        }
+
+        .contract-detail-page .contract-letter-number .contract-identity-label {
+            flex: 0 0 auto;
+            margin-left: 0;
+            color: var(--contract-navy);
+            font-size: 1.08rem;
+            font-weight: 700;
+            margin-top: -2px;
+        }
+
+        .contract-detail-page .contract-letter-number .contract-identity-value {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            color: var(--contract-navy);
+            font-size: 1.13rem;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-top: -2px;
+            text-align: left;
+        }
+
+        .contract-detail-page .quick-actions .btn-print-pdf {
+            border-color: #0d6efd;
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .contract-detail-page .quick-actions .btn-print-pdf:hover {
+            border-color: #0b5ed7;
+            background: #0b5ed7;
+            color: #fff;
+        }
+
         .contract-detail-page #sendReminderBtn {
             border-color: #8ecae6;
             background: #8ecae6;
@@ -104,6 +183,14 @@
             border-bottom: 1px solid #edf2f7;
             padding: 0.8rem 0.2rem;
             overflow-wrap: anywhere;
+            word-break: normal;
+        }
+
+        .contract-detail-page .contract-details-table td .badge {
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            line-height: 1.35;
         }
 
         .contract-detail-page .contract-details-table tr:last-child td {
@@ -324,6 +411,15 @@
                 flex: 1;
             }
 
+            .contract-detail-page .contract-identity-row {
+                width: 100%;
+                grid-template-columns: minmax(96px, max-content) minmax(0, 1fr);
+            }
+
+            .contract-detail-page .contract-letter-number {
+                display: flex;
+            }
+
             .contract-detail-page .contract-details-table,
             .contract-detail-page .contract-details-table tbody,
             .contract-detail-page .contract-details-table tr {
@@ -351,6 +447,15 @@
             .contract-detail-page .contract-details-table td:last-child {
                 flex: 1 1 55%;
                 width: auto;
+                min-width: 0;
+            }
+
+            .contract-detail-page .contract-details-table td:last-child > * {
+                max-width: 100%;
+            }
+
+            .contract-detail-page .contract-details-table .badge {
+                font-size: 0.78rem;
             }
 
             .contract-detail-page .card-header h6 {
@@ -367,12 +472,135 @@
                 padding: 0.9rem;
             }
 
+            .contract-detail-page .contract-identity-row {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 0.15rem;
+            }
+
+            .contract-detail-page .contract-letter-number {
+                flex-wrap: wrap;
+                gap: 0.15rem 0.45rem;
+                padding: 0.5rem 0;
+            }
+
+            .contract-detail-page .contract-letter-number .contract-identity-value {
+                flex-basis: 100%;
+                font-size: 0.88rem;
+            }
+
             .contract-detail-page .contract-details-table tr {
-                gap: 0.4rem;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 0.15rem;
+                padding: 0.55rem 0;
+            }
+
+            .contract-detail-page .contract-details-table td {
+                width: 100%;
+                padding: 0.1rem 0;
             }
 
             .contract-detail-page .contract-details-table td:first-child {
-                flex-basis: 42%;
+                flex-basis: auto;
+                font-size: 0.78rem;
+            }
+
+            .contract-detail-page .contract-details-table td:last-child {
+                text-align: left;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
+            body {
+                background: #fff !important;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .dashboard-sidebar,
+            .dashboard-navbar,
+            .breadcrumb,
+            .main-footer,
+            .contract-detail-page .col-lg-4,
+            .contract-detail-page .modal,
+            .contract-detail-page button,
+            .contract-detail-page a.btn,
+            .contract-detail-page .contract-boq-card .card-header a {
+                display: none !important;
+            }
+
+            .contract-detail-page {
+                padding: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                background: #fff !important;
+            }
+
+            .contract-detail-page > .row {
+                margin: 0 !important;
+            }
+
+            .contract-detail-page > .row > .col-lg-8 {
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 0 0 100% !important;
+            }
+
+            .contract-detail-page .contract-boq-desktop {
+                display: block !important;
+            }
+
+            .contract-detail-page .contract-boq-mobile {
+                display: none !important;
+            }
+
+            .contract-detail-page .contract-boq-table {
+                min-width: 0 !important;
+                width: 100% !important;
+                font-size: 9pt;
+            }
+
+            .contract-detail-page .row > .col-md-6 {
+                width: 50% !important;
+                max-width: 50% !important;
+                flex: 0 0 50% !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .contract-detail-page .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none !important;
+            }
+
+            .contract-detail-page .contract-hero {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .contract-detail-page .contract-details-table tr {
+                display: table-row !important;
+            }
+
+            .contract-detail-page .contract-details-table td {
+                display: table-cell !important;
+                padding: 0.45rem 0.2rem !important;
+            }
+
+            .contract-detail-page .contract-details-table td:first-child {
+                width: 44% !important;
+            }
+
+            .contract-detail-page .contract-details-table td:last-child {
+                width: 56% !important;
+                text-align: right !important;
             }
         }
     </style>
@@ -387,16 +615,16 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h4 class="mb-1"><?php echo e($contract->contract_name); ?></h4>
-                            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                                <h5 class="text-primary mb-0">#<?php echo e($contract->contract_number); ?></h5>
-                                <?php if($contract->nomor_surat): ?>
-                                    <span class="badge bg-light text-dark border">
-                                        <i class="fas fa-envelope-open-text text-secondary me-1"></i>No. Surat: <?php echo e($contract->nomor_surat); ?>
-
-                                    </span>
-                                <?php endif; ?>
+                            <?php if($contract->nomor_surat): ?>
+                                <div class="contract-letter-number mb-1">
+                                    <span class="contract-identity-value"><?php echo e($contract->nomor_surat); ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <div class="contract-identity-row mb-2">
+                                <span class="contract-identity-label">Nomor Kontrak</span>
+                                <h5 class="contract-identity-value text-primary mb-0">#<?php echo e($contract->contract_number); ?></h5>
                             </div>
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center flex-wrap gap-2 contract-status-actions">
                                 <?php echo $contract->getStatusBadgeAttribute(); ?>
 
                                 <?php if($contract->status === 'grace_period'): ?>
@@ -410,12 +638,7 @@
                                         <?php echo e(number_format($contract->days_remaining, 0)); ?> hari tersisa
                                     </span>
                                 <?php endif; ?>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            <div class="btn-group">
-                                
-                                <a href="<?php echo e(route('contracts.index')); ?>" class="btn btn-secondary">
+                                <a href="<?php echo e(route('contracts.index')); ?>" class="btn btn-secondary btn-sm contract-list-button">
                                     <i class="fas fa-list me-2"></i> Daftar
                                 </a>
                             </div>
@@ -427,7 +650,7 @@
             <div class="card border-0 shadow-sm mb-4 contract-boq-card">
                 <div class="card-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-2">
                     <div>
-                        <h6 class="mb-0"><i class="fas fa-list-ol me-2"></i>BOQ Kontrak Pelindo</h6>
+                        <h6 class="mb-0"><i class="fas fa-list-ol me-2"></i>BOQ Kontrak Pekerjaan</h6>
                         <small class="text-muted">Rincian volume dan harga untuk kontrak ini.</small>
                     </div>
                     <?php if(!in_array($contract->status, ['expired', 'terminated'], true)): ?>
@@ -444,9 +667,9 @@
                                     <th class="text-center">No.</th>
                                     <th>Uraian pekerjaan/barang</th>
                                     <th>Satuan</th>
-                                    <th class="text-end">Kuantitas</th>
-                                    <th class="text-end">Harga satuan</th>
-                                    <th class="text-end">Jumlah</th>
+                                    <th class="text-center">Kuantitas</th>
+                                    <th class="text-center">Harga satuan</th>
+                                    <th class="text-center">Jumlah</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -455,16 +678,16 @@
                                         <td class="text-center"><?php echo e($loop->iteration); ?></td>
                                         <td><?php echo e($item->description); ?></td>
                                         <td><?php echo e($item->unit); ?></td>
-                                        <td class="text-end text-nowrap"><?php echo e($item->formatted_quantity); ?></td>
-                                        <td class="text-end text-nowrap">Rp <?php echo e(number_format((float) $item->unit_price, 2, ',', '.')); ?></td>
-                                        <td class="text-end text-nowrap">Rp <?php echo e(number_format((float) $item->subtotal, 2, ',', '.')); ?></td>
+                                        <td class="text-center text-nowrap"><?php echo e($item->formatted_quantity); ?></td>
+                                        <td class="text-start text-nowrap">Rp <?php echo e(number_format((float) $item->unit_price, 2, ',', '.')); ?></td>
+                                        <td class="text-center text-nowrap">Rp <?php echo e(number_format((float) $item->subtotal, 2, ',', '.')); ?></td>
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th colspan="5" class="text-end">Total BOQ</th>
-                                    <th class="text-end text-nowrap">Rp <?php echo e(number_format((float) $contract->boqItems->sum('subtotal'), 2, ',', '.')); ?></th>
+                                    <th class="text-center text-nowrap">Rp <?php echo e(number_format((float) $contract->boqItems->sum('subtotal'), 2, ',', '.')); ?></th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -523,10 +746,6 @@
                                     <td>#<?php echo e($contract->contract_number); ?></td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Nomor Surat</strong></td>
-                                    <td><?php echo e($contract->nomor_surat ?? '-'); ?></td>
-                                </tr>
-                                <tr>
                                     <td><strong>Nama Kontrak</strong></td>
                                     <td><?php echo e($contract->contract_name); ?></td>
                                 </tr>
@@ -542,6 +761,12 @@
                                     <td><strong>Status</strong></td>
                                     <td><?php echo $contract->getStatusBadgeAttribute(); ?></td>
                                 </tr>
+                                <?php if($contract->berita_acara): ?>
+                                    <tr>
+                                        <td><strong>Berita Acara</strong></td>
+                                        <td><?php echo e($contract->berita_acara); ?></td>
+                                    </tr>
+                                <?php endif; ?>
                                 <tr>
                                     <td><strong>Dibuat Oleh</strong></td>
                                     <td><?php echo e($contract->creator->name ?? 'System'); ?></td>
@@ -622,11 +847,11 @@
                     </div>
                 </div>
 
-                <!-- Informasi Klien -->
+                <!-- Informasi Vendor -->
                 <div class="col-md-6 mb-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header">
-                            <h6 class="mb-0"><i class="fas fa-users me-2"></i> Informasi Klien</h6>
+                            <h6 class="mb-0"><i class="fas fa-users me-2"></i> Informasi Vendor</h6>
                         </div>
                         <div class="card-body">
                             <?php if($contract->client): ?>
@@ -674,11 +899,11 @@
                     </div>
                 </div>
 
-                <!-- Informasi Tambahan -->
+                <!-- Informasi Detail Kontrak -->
                 <div class="col-md-6 mb-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header">
-                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i> Informasi Tambahan</h6>
+                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i> Informasi Detail Kontrak</h6>
                         </div>
                         <div class="card-body">
                             <table class="table table-borderless mb-0 contract-details-table">
@@ -734,12 +959,6 @@
                                     <tr>
                                         <td width="40%"><strong>No. TTB</strong></td>
                                         <td><span class="badge bg-light text-dark border"><?php echo e($contract->ttb); ?></span></td>
-                                    </tr>
-                                <?php endif; ?>
-                                <?php if($contract->berita_acara): ?>
-                                    <tr>
-                                        <td width="40%"><strong>Berita Acara</strong></td>
-                                        <td><?php echo e($contract->berita_acara); ?></td>
                                     </tr>
                                 <?php endif; ?>
                                 <tr>
@@ -845,6 +1064,10 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
+                        <a href="<?php echo e(route('contracts.print-pdf', $contract)); ?>" class="btn btn-print-pdf">
+                            <i class="fas fa-print me-2"></i> Cetak PDF
+                        </a>
+
                         <a href="<?php echo e(route('contracts.edit', $contract)); ?>" class="btn btn-warning">
                             <i class="fas fa-edit me-2"></i> Edit Kontrak
                         </a>
@@ -1549,8 +1772,6 @@
                     });
             });
         });
-
-        // Print functionality
 
         // Copy URL to clipboard
         function copyToClipboard(url) {

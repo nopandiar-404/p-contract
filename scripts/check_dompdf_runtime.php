@@ -1,8 +1,10 @@
 <?php
 require __DIR__.'/../vendor/autoload.php';
 $app = require_once __DIR__.'/../bootstrap/app.php';
+$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 echo "Checking DomPDF facade presence and runtime\n";
+echo "GD enabled: " . (extension_loaded('gd') ? 'yes' : 'no') . "\n";
 
 if (class_exists('\\Barryvdh\\DomPDF\\Facade\\Pdf')) {
     echo "Facade exists\n";

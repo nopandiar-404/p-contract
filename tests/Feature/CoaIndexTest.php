@@ -6,14 +6,16 @@ use Tests\TestCase;
 use App\Models\Coa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 class CoaIndexTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function search_filters_results_by_code_or_name()
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
         Coa::factory()->create(['code' => 'ABC001', 'name' => 'Alpha Coa']);
@@ -27,9 +29,10 @@ class CoaIndexTest extends TestCase
         $response->assertDontSee('XYZ999');
     }
 
-    /** @test */
+    #[Test]
     public function pagination_preserves_search_query()
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
         // create 20 items matching the query so filtered results span multiple pages

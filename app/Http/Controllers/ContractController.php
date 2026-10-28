@@ -359,6 +359,19 @@ class ContractController extends Controller
     /**
      * Download all stored PDF documents attached to the contract as a ZIP bundle.
      */
+    public function printPdf(Contract $contract)
+    {
+        $contract->load(['client', 'creator', 'boqItems']);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('contracts.print_pdf', compact('contract'));
+        $pdf->setPaper('A4', 'portrait');
+
+        $filename = preg_replace('/[^A-Za-z0-9._-]+/', '-', trim($contract->contract_number));
+        $filename = $filename ?: 'kontrak';
+
+        return $pdf->download($filename . '-detail.pdf');
+    }
+
     public function downloadPdf(Request $request, Contract $contract)
     {
         $pdfFilesRaw = $contract->pdf_files ?? [];

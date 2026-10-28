@@ -142,6 +142,39 @@
             color: #fff;
         }
 
+        .contract-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-height: 34px;
+            max-width: 100%;
+            padding: 0.38rem 0.75rem;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+            white-space: normal;
+        }
+
+        .contract-type-badge.contract-type-barang {
+            border-color: #86b7fe;
+            background: #e7f1ff;
+            color: #084298;
+        }
+
+        .contract-type-badge.contract-type-jasa {
+            border-color: #9eeaf0;
+            background: #e2f7fa;
+            color: #087990;
+        }
+
+        .contract-type-badge.contract-type-license {
+            border-color: #c5b3fb;
+            background: #f1edff;
+            color: #5931a9;
+        }
+
         .contract-term-badge {
             display: inline-flex;
             align-items: center;
@@ -771,6 +804,7 @@
                     .contract-page-actions {
                         display: grid !important;
                         grid-template-columns: repeat(2, minmax(0, 1fr));
+                        gap: 0.5rem !important;
                         width: 100%;
                     }
 
@@ -780,16 +814,25 @@
 
                     .contract-page-actions .contract-search-dropdown,
                     .contract-page-actions .contract-status-dropdown,
+                    .contract-page-actions .contract-create-action,
                     .contract-page-actions .contract-control {
                         width: 100%;
+                        min-width: 0;
                     }
 
                     .contract-page-actions .contract-control {
+                        min-height: 44px;
                         justify-content: center;
-                        padding-inline: 0.5rem;
+                        padding-inline: 0.45rem;
+                        text-align: center;
+                    }
+
+                    .contract-page-actions .contract-control i {
+                        flex: 0 0 auto;
                     }
 
                     .contract-page-actions .contract-search-dropdown .dropdown-menu {
+                        width: min(360px, calc(100vw - 2rem));
                         left: 0 !important;
                         right: auto !important;
                     }
@@ -1389,8 +1432,24 @@
                                         </td>
                                         <td data-label="Jenis Kontrak">
                                             <?php if($contract->contract_type): ?>
-                                                <span class="badge bg-primary-subtle text-primary border">
-                                                    <?php echo e(config('contract_types.types.' . $contract->contract_type . '.name', 'Tidak diketahui')); ?>
+                                                <?php
+                                                    $contractTypeName = config('contract_types.types.' . $contract->contract_type . '.name', 'Tidak diketahui');
+                                                    $contractTypeClass = match ($contract->contract_type) {
+                                                        'contract_barang' => 'contract-type-barang',
+                                                        'contract_jasa' => 'contract-type-jasa',
+                                                        'license' => 'contract-type-license',
+                                                        default => 'contract-type-barang',
+                                                    };
+                                                    $contractTypeIcon = match ($contract->contract_type) {
+                                                        'contract_barang' => 'fa-box-open',
+                                                        'contract_jasa' => 'fa-handshake-angle',
+                                                        'license' => 'fa-key',
+                                                        default => 'fa-layer-group',
+                                                    };
+                                                ?>
+                                                <span class="contract-type-badge <?php echo e($contractTypeClass); ?>">
+                                                    <i class="fas <?php echo e($contractTypeIcon); ?>" aria-hidden="true"></i>
+                                                    <?php echo e($contractTypeName); ?>
 
                                                 </span>
                                             <?php else: ?>
@@ -1638,6 +1697,12 @@
                                         </td>
                                         <td data-label="Aksi" class="text-center">
                                             <div class="btn-group btn-group-sm" role="group">
+                                                <a href="<?php echo e(route('contracts.print-pdf', $contract)); ?>"
+                                                    class="btn btn-outline-primary" title="Cetak PDF"
+                                                    aria-label="Cetak PDF kontrak <?php echo e($contract->contract_number); ?>"
+                                                    data-bs-toggle="tooltip">
+                                                    <i class="fas fa-print"></i>
+                                                </a>
                                                 <button type="button" class="btn btn-outline-primary open-boq-modal"
                                                     title="Lihat BOQ" aria-label="Lihat BOQ kontrak <?php echo e($contract->contract_number); ?>"
                                                     data-bs-toggle="tooltip"
@@ -2568,15 +2633,13 @@
 
             .card-header .contract-page-actions {
                 display: grid !important;
-                grid-template-columns: minmax(0, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 align-items: stretch !important;
                 gap: 0.5rem !important;
                 width: 100% !important;
             }
 
-            .card-header .contract-page-actions .contract-search-dropdown,
-            .card-header .contract-page-actions .contract-status-dropdown,
-            .card-header .contract-page-actions .contract-create-action {
+            .card-header .contract-page-actions .contract-search-dropdown {
                 grid-column: 1 / -1;
             }
 

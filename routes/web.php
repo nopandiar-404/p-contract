@@ -92,6 +92,8 @@ Route::middleware('auth')->group(function () {
         ->name('clients.details');
 
     // Download contract documents
+    Route::get('/contracts/{contract}/print-pdf', [ContractController::class, 'printPdf'])
+        ->name('contracts.print-pdf');
     Route::get('/contracts/{contract}/download-pdf', [ContractController::class, 'downloadPdf'])
         ->name('contracts.download-pdf');
     
