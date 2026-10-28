@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\Contract;
 use App\Models\ContractType;
 use Illuminate\Http\Request;
@@ -79,3 +80,14 @@ class ContractTypeController extends Controller
         return redirect()->route('contract-types.index')->with('success', 'Jenis kontrak berhasil dihapus.');
     }
 }
+=======
+class ContractTypeController extends Controller
+{
+    public function index()
+    {
+        return view('contract-types.index', [
+            'contractTypes' => config('contract_types.types', []),
+        ]);
+    }
+}
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8

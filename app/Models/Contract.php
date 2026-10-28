@@ -15,7 +15,10 @@ class Contract extends Model
 
     protected $fillable = [
         'contract_number',
+<<<<<<< HEAD
         'nomor_surat',
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         'contract_name',
         'contract_type',
         'client_id',
@@ -27,6 +30,7 @@ class Contract extends Model
         'end_date',
         'status',
         'contract_term',
+<<<<<<< HEAD
         'tahun_1',
         'tahun_2',
         'jumlah',
@@ -39,6 +43,8 @@ class Contract extends Model
         'payment_status',
         'payment_date',
         'keterangan',
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         'grace_period_days',
         'actual_end_date',
         'termination_reason',
@@ -51,6 +57,7 @@ class Contract extends Model
     // Gunakan $casts untuk date fields (lebih modern dari $dates)
     protected $casts = [
         'dpp' => 'decimal:2',
+<<<<<<< HEAD
         'tahun_1' => 'decimal:2',
         'tahun_2' => 'decimal:2',
         'jumlah' => 'decimal:2',
@@ -60,6 +67,11 @@ class Contract extends Model
         'end_date' => 'date',
         'actual_end_date' => 'date',
         'payment_date' => 'date',
+=======
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'actual_end_date' => 'date',
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -74,7 +86,7 @@ class Contract extends Model
         'remaining_grace_period_days',
         'status_badge',
         'priority',
-        'duration_in_days'
+        'duration_in_days' // Tambahkan ini
     ];
 
     // Relationships
@@ -104,6 +116,7 @@ class Contract extends Model
     }
 
     // Accessors
+<<<<<<< HEAD
     public function getJumlahAttribute($value)
     {
         if ($value !== null) {
@@ -140,6 +153,8 @@ class Contract extends Model
         return null;
     }
 
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
     public function getDaysRemainingAttribute()
     {
         if (in_array($this->status, ['expired', 'terminated'])) {
@@ -151,7 +166,7 @@ class Contract extends Model
             if (!$endDate) return 0;
 
             $days = Carbon::now()->diffInDays(Carbon::parse($endDate), false);
-            return max(0, $days);
+            return max(0, $days); // Pastikan tidak negatif
         } catch (\Exception $e) {
             return 0;
         }
@@ -280,6 +295,7 @@ class Contract extends Model
         $status = $this->status;
         $badge = $badges[$status] ?? ['color' => 'secondary', 'text' => ucfirst($status), 'icon' => 'question-circle'];
 
+        // Gunakan e() untuk escape HTML
         $html = '<span class="badge bg-' . e($badge['color']) . '">';
         $html .= '<i class="fas fa-' . e($badge['icon']) . ' me-1"></i>';
         $html .= e($badge['text']) . '</span>';
@@ -332,6 +348,7 @@ class Contract extends Model
             }
         });
 
+<<<<<<< HEAD
         // Auto-update status berdasarkan tanggal dan hitung jumlah tahun, PPN (11% * Jumlah), dan Total (Jumlah + PPN)
         static::saving(function ($contract) {
             $contract->updateStatusBasedOnDate();
@@ -345,6 +362,11 @@ class Contract extends Model
                 $contract->ppn = null;
                 $contract->total = null;
             }
+=======
+        // Auto-update status berdasarkan tanggal
+        static::saving(function ($contract) {
+            $contract->updateStatusBasedOnDate();
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
         });
     }
 

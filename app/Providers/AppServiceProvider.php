@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Schema;
+=======
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+<<<<<<< HEAD
         try {
             if (Schema::hasTable('contract_types')) {
                 $dbTypes = \App\Models\ContractType::all();
@@ -39,3 +43,9 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 }
+
+=======
+        //
+    }
+}
+>>>>>>> 8913ad198d6cee56e8e071c1e7ad62e855d82fe8
