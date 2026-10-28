@@ -30,8 +30,8 @@ Route::get('/', function () {
 
 
 
-// Route dashboard dilindungi oleh middleware auth
-Route::middleware('auth')->group(function () {
+// Route dashboard dilindungi oleh middleware auth dan dibatasi 10 permintaan per menit
+Route::middleware(['auth', 'throttle:10,1'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/grace-period', [DashboardController::class, 'gracePeriodReport'])->name('dashboard.grace-period');
     Route::get('/reports', [DashboardController::class, 'reports'])->name('reports');
