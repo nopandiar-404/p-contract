@@ -998,17 +998,18 @@
                 });
 
                 if (points.length > 0) {
-                    ctx.beginPath();
                     ctx.lineWidth = 3;
                     ctx.strokeStyle = '#0072bc';
                     ctx.fillStyle = 'rgba(0, 114, 188, 0.12)';
+
+                    ctx.beginPath();
                     ctx.moveTo(points[0].x, points[0].y);
 
                     for (let i = 1; i < points.length; i++) {
                         const prev = points[i - 1];
                         const curr = points[i];
                         const cx = (prev.x + curr.x) / 2;
-                        ctx.quadraticCurveTo(prev.x, prev.y, cx, (prev.y + curr.y) / 2);
+                        ctx.bezierCurveTo(cx, prev.y, cx, curr.y, curr.x, curr.y);
                     }
 
                     const last = points[points.length - 1];
@@ -1017,6 +1018,15 @@
                     ctx.lineTo(points[0].x, height - padding.bottom);
                     ctx.closePath();
                     ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.moveTo(points[0].x, points[0].y);
+                    for (let i = 1; i < points.length; i++) {
+                        const prev = points[i - 1];
+                        const curr = points[i];
+                        const cx = (prev.x + curr.x) / 2;
+                        ctx.bezierCurveTo(cx, prev.y, cx, curr.y, curr.x, curr.y);
+                    }
                     ctx.stroke();
 
                     ctx.fillStyle = '#0072bc';
@@ -1058,7 +1068,8 @@
                             backgroundColor: 'rgba(0, 114, 188, 0.1)',
                             borderWidth: 3,
                             fill: true,
-                            tension: 0.35,
+                            tension: 0.4,
+                            cubicInterpolationMode: 'monotone',
                             pointBackgroundColor: '#0072bc',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
@@ -1177,7 +1188,8 @@
                 });
 
                 // Chart awal sudah dirender langsung dengan data default (monthly) dari server HTML
-                // fetchTimeSeries dipanggil hanya saat user memilih filter periode
+                // Muat ulang data bulanan dari server agar rentang bulan selalu 6 bulan ke depan.
+                fetchTimeSeries('monthly');
             });
 
             document.querySelectorAll('.dashboard-send-reminder').forEach(button => {
