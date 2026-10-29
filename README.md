@@ -7,6 +7,112 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Instalasi Frontend
+
+Pastikan Node.js dan npm sudah terpasang, kemudian instal dependency dan buat aset produksi:
+
+```bash
+npm install
+npm run build
+```
+
+Perintah `npm run build` akan membangun aset frontend dengan Vite ke direktori `public/build`.
+
+## Konfigurasi Database MySQL
+
+Pastikan server MySQL/MariaDB sudah berjalan, lalu buat database dengan salah satu cara berikut.
+
+### Menggunakan MySQL client
+
+```bash
+mysql -u root -p < database/mysql_setup.sql
+```
+
+Konfigurasi aplikasi dalam `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=p_contract
+DB_USERNAME=root
+DB_PASSWORD=isi_password_mysql
+```
+
+Setelah konfigurasi `.env` selesai, buat semua tabel dan data awal melalui Laravel:
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+Untuk membuat ulang database beserta data awal:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+## Menjalankan Program Laravel
+
+### Menjalankan di server lokal
+
+1. Instal dependency PHP dan siapkan konfigurasi aplikasi:
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+Pada Windows PowerShell, gunakan perintah berikut untuk menyalin `.env` jika `cp` tidak tersedia:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+2. Sesuaikan koneksi database pada berkas `.env`, kemudian buat database dan jalankan migrasi:
+
+```bash
+php artisan migrate
+php artisan storage:link
+php artisan optimize:clear
+```
+
+3. Jalankan server Laravel:
+
+```bash
+php artisan serve
+```
+
+Aplikasi dapat dibuka melalui alamat yang ditampilkan Artisan, biasanya `http://127.0.0.1:8000`.
+
+Untuk menjalankan server Laravel, queue worker, log, dan Vite secara bersamaan saat pengembangan:
+
+```bash
+composer run dev
+```
+
+### Menjalankan di server hosting atau produksi
+
+1. Konfigurasi document root web server menuju direktori `public`.
+2. Pastikan `.env` production sudah diisi, khususnya:
+   - `APP_ENV=production`
+   - `APP_DEBUG=false`
+   - `APP_URL`
+   - Konfigurasi database
+3. Jalankan:
+
+```bash
+composer install --no-dev --optimize-autoloader
+npm install
+npm run build
+php artisan storage:link
+php artisan migrate --force
+php artisan optimize
+```
+
+Berikan izin tulis kepada web server untuk direktori `storage` dan `bootstrap/cache`. Lihat contoh konfigurasi Apache atau Nginx pada direktori `docs`.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
