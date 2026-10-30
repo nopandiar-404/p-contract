@@ -4,6 +4,7 @@
     "scss.lint.unknownAtRules": "ignore",
     "less.lint.unknownAtRules": "ignore",
     "tailwindCSS.validate": false,
+    "terminal.integrated.windowsUseConptyDll": true,
     "files.exclude": {
         "**/public/build/**": true
     }
