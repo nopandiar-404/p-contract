@@ -945,6 +945,11 @@ body:has(.login-page) > main.py-4 {
     to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes loginFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 @media (max-width: 1024px) {
     .login-container {
         grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
@@ -1096,6 +1101,11 @@ body:has(.login-page) > main.py-4 {
     .contract-chip,
     .illustration-orbit {
         animation: none;
+    }
+
+    .promo-inner,
+    .login-card {
+        animation: loginFade 250ms ease both;
     }
 }
 

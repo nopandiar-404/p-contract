@@ -620,6 +620,7 @@ body:has(.login-page) > main.py-4 {
 @keyframes noticeFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 @keyframes orbitDrift { from { transform: scale(0.94) rotate(-8deg); } to { transform: scale(1.04) rotate(8deg); } }
 @keyframes loginRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes loginFade { from { opacity: 0; } to { opacity: 1; } }
 
 @media (max-width: 1024px) {
     .login-page .login-container { grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr); gap: 24px; }
@@ -662,6 +663,7 @@ body:has(.login-page) > main.py-4 {
 @media (prefers-reduced-motion: reduce) {
     .login-page .promo-inner, .login-page .login-card, .login-page .contract-document,
     .login-page .contract-notice, .login-page .contract-chip, .login-page .illustration-orbit { animation: none; }
+    .login-page .promo-inner, .login-page .login-card { animation: loginFade 250ms ease both; }
 }
 
 @media (min-width: 761px) {
