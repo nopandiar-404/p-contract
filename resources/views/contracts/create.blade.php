@@ -26,7 +26,6 @@
                             <h6 class="border-bottom pb-2 mb-2">
                                 <i class="fas fa-info-circle text-primary me-2"></i> Informasi Umum Kontrak
                             </h6>
-                            <p class="text-muted small mb-3">Lengkapi nama, nomor, deskripsi, dan jenis kontrak ini.</p>
 
                             <div class="row">
                                 <div class="col-md-4 mb-3">
@@ -38,15 +37,16 @@
                                         <input type="text"
                                             class="form-control @error('contract_number') is-invalid @enderror"
                                             id="contract_number" name="contract_number" value="{{ old('contract_number') }}"
-                                            placeholder="CTR-001-2024" required>
-                                        <button type="button" class="btn btn-outline-secondary" id="generateContractNumberBtn">
+                                            placeholder="PLD-PK-2026-11-15" required>
+                                        <button type="button" class="btn btn-outline-secondary" id="generateContractNumberBtn"
+                                            title="Buat nomor dari divisi dan tanggal mulai">
                                             <i class="fas fa-sync-alt"></i>
                                         </button>
                                     </div>
                                     @error('contract_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                    <small class="form-text text-muted">Format: CTR-XXX-YYYY</small>
+                                    <small id="contractNumberHelp" class="form-text text-muted">Format: PLD-kode divisi-YYYY-MM-DD. Pilih tanggal mulai lalu tekan tombol untuk membuat nomor.</small>
                                 </div>
 
                                 <div class="col-md-4 mb-3">
@@ -59,7 +59,6 @@
                                     @error('nomor_surat')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                    <small class="form-text text-muted">Format huruf / teks bebas (maks. 10.000 karakter)</small>
                                 </div>
 
                                 <div class="col-md-4 mb-3">
@@ -758,15 +757,37 @@
 
         // Generate contract number button
         const generateButton = document.getElementById('generateContractNumberBtn');
-        generateButton.addEventListener('click', function() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            contractNumberInput.value = `CTR-${year}${month}-${random}`;
+        const contractNumberHelp = document.getElementById('contractNumberHelp');
+        generateButton.addEventListener('click', async function() {
+            if (!startDateInput.value) {
+                contractNumberHelp.textContent = 'Pilih tanggal mulai kontrak terlebih dahulu.';
+                contractNumberHelp.className = 'form-text text-danger';
+                return;
+            }
 
-            document.getElementById('contractNumberValid').className = 'text-success';
-            document.getElementById('contractNumberValid').textContent = '✓';
+            generateButton.disabled = true;
+            try {
+                const params = new URLSearchParams({ start_date: startDateInput.value });
+                const response = await fetch(`{{ route('contracts.generate-number') }}?${params}`, {
+                    headers: { Accept: 'application/json' }
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Nomor kontrak gagal dibuat.');
+                }
+
+                contractNumberInput.value = result.contract_number;
+                document.getElementById('contractNumberValid').className = 'text-success';
+                document.getElementById('contractNumberValid').textContent = '✓';
+                contractNumberHelp.textContent = 'Kode divisi diambil dari inisial nama divisi pada profil.';
+                contractNumberHelp.className = 'form-text text-muted';
+            } catch (error) {
+                contractNumberHelp.textContent = error.message || 'Nomor kontrak gagal dibuat.';
+                contractNumberHelp.className = 'form-text text-danger';
+            } finally {
+                generateButton.disabled = false;
+            }
         });
 
         // Set minimum start date to one year ago and allow prior-year start dates

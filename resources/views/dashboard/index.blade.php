@@ -65,12 +65,16 @@
         .card.border-0.shadow-sm.h-100 {
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            background: var(--glass-surface);
+            border: 1px solid var(--glass-border) !important;
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            box-shadow: var(--glass-shadow);
             transition: all 0.3s ease;
         }
 
         .card.border-0.shadow-sm.h-100:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 24px 52px rgba(31, 39, 112, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.95);
             transform: translateY(-2px);
         }
 
@@ -82,6 +86,10 @@
         /* Chart Container Responsive */
         .data-table canvas {
             max-height: 250px;
+        }
+
+        .data-table .contract-name-chart {
+            max-height: none;
         }
 
         /* Tablet Layout (768px - 991px) */
@@ -416,18 +424,18 @@
             --dashboard-red: #e31e24;
             --dashboard-ink: #17324d;
             --dashboard-line: #dce8f1;
-            --dashboard-shadow: 0 8px 24px rgba(17, 58, 91, 0.08);
+            --dashboard-shadow: var(--glass-shadow);
         }
 
         body {
-            background: linear-gradient(135deg, #eaf5fc 0%, #f5f8fb 58%, #fff3f2 100%);
+            background: var(--dashboard-glossy-background);
+            background-attachment: fixed;
             color: var(--dashboard-ink);
         }
 
         .top-bar {
             border: 1px solid var(--dashboard-line);
             border-left: 4px solid var(--dashboard-blue);
-            border-radius: 10px;
             box-shadow: var(--dashboard-shadow);
             margin-bottom: 20px;
         }
@@ -446,9 +454,14 @@
             gap: 4px 12px;
             min-height: 132px;
             padding: 16px;
-            border: 1px solid var(--dashboard-line);
+            border: 1px solid var(--glass-border);
             border-radius: 10px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9) 58%, rgba(255, 255, 255, 0.96));
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            backdrop-filter: blur(var(--glass-blur)) saturate(165%);
             box-shadow: var(--dashboard-shadow);
+            position: relative;
+            z-index: 1;
         }
 
         .dashboard-grid.row.g-4 > .dashboard-stat.col-xl-3 > .stat-card .stat-icon {
@@ -490,13 +503,18 @@
         }
 
         .dashboard-grid .data-table {
-            border: 1px solid var(--dashboard-line);
+            border: 1px solid var(--glass-border);
             border-radius: 10px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92) 58%, rgba(255, 255, 255, 0.96));
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            backdrop-filter: blur(var(--glass-blur)) saturate(165%);
             box-shadow: var(--dashboard-shadow);
+            position: relative;
+            z-index: 1;
         }
 
         .dashboard-grid .data-table .table-header {
-            border-bottom: 1px solid #e8eff5;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.72);
         }
 
         .dashboard-grid .data-table .table-header h5 {
@@ -511,110 +529,18 @@
         .main-content > footer,
         .main-content > footer p,
         .main-content > footer small {
-            color: #60788c !important;
+            color: #ffffff !important;
         }
 
         @media (max-width: 767.98px) {
             .main-content {
-                padding: 14px 12px 24px;
+                padding: 8px 12px 24px;
             }
 
-            .top-bar {
-                display: grid;
-                grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1.3fr);
-                align-items: center;
-                gap: 12px;
-                padding: 14px;
-                text-align: left;
-            }
-
-            .page-title {
-                min-width: 0;
-            }
-
-            .page-title h1 {
-                font-size: 20px;
-            }
-
-            .page-title p {
-                font-size: 12px;
-            }
-
-            .user-menu {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) auto;
-                grid-template-areas: "search notification" "profile toggle";
-                align-items: center;
-                gap: 8px 10px;
-                width: 100%;
-                min-width: 0;
-            }
-
-            .user-menu .search-box {
-                grid-area: search;
-                width: auto;
-                max-width: none;
-                min-width: 0;
-            }
-
-            .user-menu .search-box input {
-                width: 100%;
-                min-width: 0;
-            }
-
-            .user-menu .notification-btn {
-                grid-area: notification;
-                justify-self: center;
-                width: 36px;
-                height: 42px;
-            }
-
-            .user-menu .dropdown {
-                grid-area: profile;
-                justify-self: end;
-                min-width: 0;
-            }
-
-            .user-menu .dropdown > .btn {
-                max-width: 100%;
-                padding: 8px 10px;
-                font-size: 13px;
-                white-space: nowrap;
-            }
-
-            .user-menu .menu-toggle {
-                grid-area: toggle;
-                justify-self: end;
-                display: grid;
-                place-items: center;
-                width: 42px;
-                height: 42px;
-                padding: 0;
-            }
-
-        }
-
-        @media (max-width: 480px) {
-            .top-bar {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            .user-menu {
-                grid-column: 1;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .user-menu .user-name {
-                display: none;
-            }
-
-            .user-menu .dropdown > .btn {
-                display: grid;
-                place-items: center;
-                width: 42px;
-                height: 42px;
-                padding: 0;
+            .main-content > .top-bar {
+                margin-left: -12px;
+                margin-right: -12px;
+                border-radius: 0 0 10px 10px;
             }
         }
 
@@ -726,7 +652,7 @@
         </div>
 
         <!-- Charts and Main Content -->
-        <div class="col-xl-8 col-lg-7 fade-in" style="animation-delay: 0.5s">
+        <div class="col-12 fade-in" style="animation-delay: 0.5s">
             <!-- Chart Container -->
             <div class="data-table mb-4">
                 <div class="table-header">
@@ -751,80 +677,71 @@
                 </div>
             </div>
 
-        </div>
-
-        <!-- Sidebar Widgets -->
-        <div class="col-xl-4 col-lg-5 fade-in" style="animation-delay: 0.6s">
-
-            <!-- Notifikasi Terbaru -->
-            <div class="data-table">
-                @php
-                    $attentionCount =
-                        ($gracePeriodContracts ?? 0) + ($expiringThisMonth ?? 0) + ($expiredContracts ?? 0);
-                @endphp
-                <div class="table-header d-flex align-items-center justify-content-between">
-                    <div>
-                        <h5 class="mb-0"><i class="fas fa-bell me-2"></i> Notifikasi Terbaru</h5>
-                        @if ($attentionCount > 0)
-                            <small class="text-muted">Terdapat kontrak yang perlu tindakan</small>
-                        @else
-                            <small class="text-muted">Status sistem terkini</small>
-                        @endif
-                    </div>
-                    <div>
-                        <span
-                            class="badge bg-warning">{{ $attentionCount > 0 ? $attentionCount . ' perlu tindakan' : ($notifications ?? collect())->count() . ' baru' }}</span>
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-md-6">
+                    <div class="data-table h-100" data-status-card="active" data-count="{{ $activeContracts ?? 0 }}">
+                        <div class="table-header">
+                            <h5><i class="fas fa-check-circle text-success me-2"></i> Kontrak Berjalan</h5>
+                        </div>
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-baseline mb-3">
+                                <span class="text-muted">Jumlah kontrak</span>
+                                <strong class="fs-2 text-success">{{ $activeContracts ?? 0 }}</strong>
+                            </div>
+                            @if (($activeContractList ?? collect())->isNotEmpty())
+                                @php
+                                    $activeContractNames = $activeContractList
+                                        ->map(function ($contract) {
+                                            return $contract->contract_name ?: $contract->contract_number ?: 'Kontrak #' . $contract->id;
+                                        })
+                                        ->values();
+                                @endphp
+                                <div class="contract-name-chart-scroll" style="max-height: 320px; overflow-y: auto;">
+                                    <div data-chart-height="{{ max($activeContractNames->count() * 36, 180) }}"
+                                        style="position: relative;">
+                                        <canvas class="contract-name-chart" data-color="#198754"
+                                            data-labels="{{ json_encode($activeContractNames) }}"></canvas>
+                                    </div>
+                                </div>
+                            @else
+                                <p class="text-muted mb-0">Belum ada kontrak berjalan.</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                <div class="p-3">
-                    {{-- Summary badges for attention counts --}}
-                    <div class="mb-2">
-                        @if (($gracePeriodContracts ?? 0) > 0)
-                            <a href="{{ route('dashboard.grace-period') }}"
-                                class="badge bg-warning text-decoration-none me-2">Masa Tenggang:
-                                {{ $gracePeriodContracts }}</a>
-                        @endif
-                        @if (($expiringThisMonth ?? 0) > 0)
-                            <span class="badge bg-info text-decoration-none me-2">Berakhir Bulan Ini:
-                                {{ $expiringThisMonth }}</span>
-                        @endif
-                        @if (($expiredContracts ?? 0) > 0)
-                            <span class="badge bg-danger text-decoration-none">Kadaluarsa: {{ $expiredContracts }}</span>
-                        @endif
-                    </div>
-                    @forelse(($notifications ?? collect())->take(3) as $notification)
-                        <div class="notification-item mb-3 pb-3 border-bottom">
-                            <div class="d-flex">
-                                <div class="notification-icon me-3">
-                                    @if (($notification->type ?? '') == 'reminder')
-                                        <i class="fas fa-clock text-warning fa-lg"></i>
-                                    @elseif(($notification->type ?? '') == 'grace_period_start')
-                                        {{ rtrim(rtrim(number_format($remainingGraceDays, 2, '.', ''), '0'), '.') }}
-                                    @else
-                                        <i class="fas fa-info-circle text-info fa-lg"></i>
-                                    @endif
-                                </div>
-                                <div class="grow">
-                                    <p class="mb-1" style="font-size: 14px;">{{ $notification->message ?? '' }}</p>
-                                    <small
-                                        class="text-muted">{{ optional($notification->created_at)->diffForHumans() ?? '' }}</small>
-                                </div>
+                <div class="col-12 col-md-6">
+                    <div class="data-table h-100" data-status-card="grace-period" data-count="{{ $gracePeriodContracts ?? 0 }}">
+                        <div class="table-header">
+                            <h5><i class="fas fa-clock text-warning me-2"></i> Kontrak Masa Tenggang</h5>
+                        </div>
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-baseline mb-3">
+                                <span class="text-muted">Jumlah kontrak</span>
+                                <strong class="fs-2 text-warning">{{ $gracePeriodContracts ?? 0 }}</strong>
                             </div>
+                            @if (($inGracePeriod ?? collect())->isNotEmpty())
+                                @php
+                                    $gracePeriodContractNames = $inGracePeriod
+                                        ->map(function ($contract) {
+                                            return $contract->contract_name ?: $contract->contract_number ?: 'Kontrak #' . $contract->id;
+                                        })
+                                        ->values();
+                                @endphp
+                                <div class="contract-name-chart-scroll" style="max-height: 320px; overflow-y: auto;">
+                                    <div data-chart-height="{{ max($gracePeriodContractNames->count() * 36, 180) }}"
+                                        style="position: relative;">
+                                        <canvas class="contract-name-chart" data-color="#ffc107"
+                                            data-labels="{{ json_encode($gracePeriodContractNames) }}"></canvas>
+                                    </div>
+                                </div>
+                            @else
+                                <p class="text-muted mb-0">Belum ada kontrak dalam masa tenggang.</p>
+                            @endif
                         </div>
-                    @empty
-                        <div class="text-center py-3">
-                            <i class="fas fa-bell-slash text-muted fa-2x mb-2"></i>
-                            <p class="text-muted mb-0">Tidak ada notifikasi</p>
-                        </div>
-                    @endforelse
-
-                    @if (($notifications ?? collect())->count() > 0)
-                        <a href="{{ route('notifications.index') }}" class="btn btn-outline-primary w-100 mt-2">
-                            <i class="fas fa-list me-2"></i> Lihat Semua Notifikasi
-                        </a>
-                    @endif
+                    </div>
                 </div>
             </div>
+
         </div>
 
         <!-- Kontrak dalam Masa Tenggang (Full Width) -->
@@ -1043,6 +960,13 @@
                 });
             }
 
+            document.querySelectorAll('[data-chart-height]').forEach(container => {
+                const height = Number(container.dataset.chartHeight);
+                if (Number.isFinite(height) && height > 0) {
+                    container.style.height = `${height}px`;
+                }
+            });
+
             // Chart Configuration
             const chartCanvas = document.getElementById('contractsChart');
             if (!chartCanvas) {
@@ -1097,6 +1021,55 @@
             } else {
                 renderFallbackLineChart(chartCanvas, months, counts);
             }
+
+            document.querySelectorAll('.contract-name-chart').forEach(canvas => {
+                const labels = JSON.parse(canvas.dataset.labels || '[]');
+                const color = canvas.dataset.color;
+
+                if (typeof Chart === 'undefined' || labels.length === 0) return;
+
+                new Chart(canvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jumlah Kontrak',
+                            data: labels.map(() => 1),
+                            backgroundColor: color,
+                            borderRadius: 4,
+                            maxBarThickness: 24
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 1,
+                                ticks: {
+                                    stepSize: 1,
+                                    precision: 0
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    autoSkip: false
+                                }
+                            }
+                        }
+                    }
+                });
+            });
 
             // Chart period control and server-driven time-series
             let currentChartPeriod = 'monthly';

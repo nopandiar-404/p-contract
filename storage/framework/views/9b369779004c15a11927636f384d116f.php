@@ -21,7 +21,7 @@
         }
     ?>
 
-    <div class="login-page register-page">
+    <div class="login-page register-page login-split-page">
         <main class="login-container register-container" aria-labelledby="registerHeading">
             <section class="login-card auth-card" role="region" aria-label="Register form">
                 <header class="brand center">

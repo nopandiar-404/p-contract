@@ -1,0 +1,11 @@
+{
+    "css.lint.vendorPrefix": "ignore",
+    "css.lint.unknownAtRules": "ignore",
+    "scss.lint.unknownAtRules": "ignore",
+    "less.lint.unknownAtRules": "ignore",
+    "tailwindCSS.validate": false,
+    "terminal.integrated.windowsUseConptyDll": true,
+    "files.exclude": {
+        "**/public/build/**": true
+    }
+}

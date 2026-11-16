@@ -318,7 +318,10 @@ class Contract extends Model
 
         static::creating(function ($contract) {
             if (empty($contract->contract_number)) {
-                $contract->contract_number = self::generateContractNumber();
+                $contract->contract_number = self::generateContractNumber(
+                    $contract->start_date,
+                    Auth::user()?->division
+                );
             }
             if (empty($contract->created_by) && Auth::check()) {
                 $contract->created_by = Auth::id();
@@ -346,16 +349,38 @@ class Contract extends Model
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
 
-    public static function generateContractNumber()
+    public static function divisionCode(?string $division): ?string
     {
-        $prefix   = 'CTR';
-        $year     = date('Y');
-        $month    = date('m');
-        $sequence = static::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->count() + 1;
+        $words = preg_split('/[^A-Za-z0-9]+/', trim($division ?? ''), -1, PREG_SPLIT_NO_EMPTY);
 
-        return sprintf('%s-%s%s-%04d', $prefix, $year, $month, $sequence);
+        if (!$words) {
+            return null;
+        }
+
+        if (count($words) === 1) {
+            return strtoupper(substr($words[0], 0, 3));
+        }
+
+        return substr(strtoupper(implode('', array_map(static fn ($word) => $word[0], $words))), 0, 10);
+    }
+
+    public static function generateContractNumber($startDate = null, ?string $division = null): string
+    {
+        $divisionCode = self::divisionCode($division ?? Auth::user()?->division) ?? 'UNK';
+        $date = Carbon::parse($startDate ?: now())->format('Y-m-d');
+        $base = sprintf('PLD-%s-%s', $divisionCode, $date);
+
+        if (!static::where('contract_number', $base)->exists()) {
+            return $base;
+        }
+
+        for ($sequence = 2; ; $sequence++) {
+            $candidate = sprintf('%s-%03d', $base, $sequence);
+
+            if (!static::where('contract_number', $candidate)->exists()) {
+                return $candidate;
+            }
+        }
     }
 
     public function updateStatusBasedOnDate()

@@ -40,6 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/summary', [DashboardController::class, 'distribution'])->name('reports.summary');
     // Also expose under /api prefix but keep web middleware so session cookies work for frontend fetches
     Route::get('/api/reports/summary', [DashboardController::class, 'distribution'])->name('api.reports.summary');
+    Route::get('/api/dashboard/stats', [DashboardApiController::class, 'getStats'])->name('api.dashboard.stats');
+    Route::get('/api/notifications/unread-count', [DashboardApiController::class, 'unreadCount'])
+        ->name('api.notifications.unread-count');
     
     // Analytics detailed page
     Route::get('/analytics', [DashboardController::class, 'analytics'])->name('analytics');
@@ -58,6 +61,8 @@ Route::middleware('auth')->group(function () {
     // Contract-specific routes
     Route::post('/contracts/{contract}/update-status', [ContractController::class, 'updateStatus'])
         ->name('contracts.update-status');
+    Route::get('/contracts/generate-number', [ContractController::class, 'generateNumber'])
+        ->name('contracts.generate-number');
     Route::post('/contracts/{contract}/renew', [ContractController::class, 'renew'])
         ->name('contracts.renew');
     // Send reminder (WhatsApp / push)

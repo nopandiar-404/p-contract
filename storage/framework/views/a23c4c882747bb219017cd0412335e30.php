@@ -29,11 +29,8 @@
             </div>
             <div class="document-signature"><span></span><small>Ditandatangani elektronik</small></div>
             <span class="document-stamp">TERVERIFIKASI</span>
+            <span class="contract-chip">STATUS AKTIF</span>
         </div>
-        <div class="contract-notice">
-            <span class="notice-check">&#10003;</span>
-            <span><strong>Kontrak terpantau</strong><small>Pengingat masa berlaku aktif</small></span>
-        </div>
-        <span class="contract-chip">STATUS AKTIF</span>
+        
     </div>
 </aside><?php /**PATH C:\xaampp8.2.12_NEW\htdocs\p-contract\resources\views/auth/partials/login-promo.blade.php ENDPATH**/ ?>

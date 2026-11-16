@@ -6,27 +6,52 @@ use App\Http\Controllers\Controller;
 use App\Models\Contract;
 use App\Models\ContractNotification;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class DashboardApiController extends Controller
 {
     public function getStats()
     {
+        $contracts = $this->visibleContracts();
+
         return response()->json([
-            'activeContracts' => Contract::active()->count(),
-            'gracePeriodContracts' => Contract::inGracePeriod()->count(),
-            'expiringThisMonth' => Contract::expiringSoon(30)->count(),
-            'expiredContracts' => Contract::expired()->count(),
-            'unreadNotifications' => ContractNotification::where('is_read', false)->count(),
-            'updated_at' => now()->toDateTimeString()
+            'activeContracts' => (clone $contracts)->active()->count(),
+            'gracePeriodContracts' => (clone $contracts)->inGracePeriod()->count(),
+            'expiringThisMonth' => (clone $contracts)->expiringSoon(30)->count(),
+            'expiredContracts' => (clone $contracts)->expired()->count(),
+            'unreadNotifications' => $this->visibleUnreadNotifications()->count(),
+            'updated_at' => now()->toDateTimeString(),
         ]);
     }
 
     public function unreadCount()
     {
         return response()->json([
-            'count' => ContractNotification::where('is_read', false)->count()
+            'count' => $this->visibleUnreadNotifications()->count(),
         ]);
+    }
+
+    private function visibleContracts(): Builder
+    {
+        $user = auth()->user();
+
+        return Contract::query()->when(
+            $user->role !== 'admin',
+            fn (Builder $query) => $query->where('created_by', $user->id)
+        );
+    }
+
+    private function visibleUnreadNotifications(): Builder
+    {
+        $user = auth()->user();
+        $query = ContractNotification::query()->where('is_read', false);
+
+        if ($user->role !== 'admin') {
+            $query->whereHas('contract', fn (Builder $contractQuery) => $contractQuery->where('created_by', $user->id));
+        }
+
+        return $query;
     }
 
     public function chartData(Request $request)

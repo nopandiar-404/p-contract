@@ -18,7 +18,7 @@
         }
     ?>
 
-    <div class="login-page">
+    <div class="login-page login-split-page">
         <main class="login-container" aria-labelledby="loginHeading">
 
             <section class="login-card auth-card" role="region" aria-label="Login form">

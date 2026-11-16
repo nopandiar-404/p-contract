@@ -31,6 +31,14 @@ class DashboardController extends Controller
                 return $q->where('created_by', $userId);
             })->where('status', 'active')->count();
 
+            $activeContractList = Contract::select(['id', 'contract_name', 'contract_number'])
+                ->when(!$isAdmin, function ($q) use ($userId) {
+                    return $q->where('created_by', $userId);
+                })
+                ->where('status', 'active')
+                ->orderBy('contract_name')
+                ->get();
+
             $gracePeriodContracts = Contract::when(!$isAdmin, function ($q) use ($userId) {
                 return $q->where('created_by', $userId);
             })->where('status', 'grace_period')->count();
@@ -78,6 +86,7 @@ class DashboardController extends Controller
             // Jika ada error database, set nilai default
             $totalContracts = 0;
             $activeContracts = 0;
+            $activeContractList = collect();
             $gracePeriodContracts = 0;
             $expiringThisMonth = 0;
             $expiredContracts = 0;
@@ -91,6 +100,7 @@ class DashboardController extends Controller
         return view('dashboard.index', compact(
             'totalContracts',
             'activeContracts',
+            'activeContractList',
             'gracePeriodContracts',
             'expiringThisMonth',
             'expiredContracts',

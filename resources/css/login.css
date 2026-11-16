@@ -667,13 +667,13 @@ body:has(.login-page) > main.py-4 {
     aspect-ratio: 1;
     border: 1px solid rgba(130, 238, 249, 0.26);
     border-radius: 50%;
-    animation: orbitDrift 12s ease-in-out infinite alternate;
+    animation: orbitDrift 12s ease-in-out infinite alternate, orbitReveal 1.2s ease both;
 }
 
 .orbit-two {
     width: min(84%, 440px);
     border-color: rgba(255, 255, 255, 0.13);
-    animation-delay: -5s;
+    animation: orbitDrift 12s ease-in-out -5s infinite alternate, orbitReveal 1.2s 180ms ease both;
 }
 
 .contract-document {
@@ -688,8 +688,8 @@ body:has(.login-page) > main.py-4 {
     background: linear-gradient(155deg, #fff 0%, #f4f9ff 100%);
     box-shadow: 0 26px 65px rgba(5, 28, 58, 0.32);
     color: #173d61;
-    transform: rotate(-5deg);
-    animation: contractFloat 6s ease-in-out infinite;
+    transform: rotate(-5deg) scale(1.1);
+    animation: contractFloat 6s ease-in-out 1.4s infinite, detailReveal 750ms ease both;
 }
 
 .document-topline {
@@ -698,6 +698,7 @@ body:has(.login-page) > main.py-4 {
     gap: 8px;
     padding-bottom: 12px;
     border-bottom: 1px solid #dceaf5;
+    animation: detailReveal 500ms 150ms ease both;
 }
 
 .document-mark {
@@ -738,6 +739,7 @@ body:has(.login-page) > main.py-4 {
     font-size: 0.58rem;
     font-weight: 800;
     letter-spacing: 0.1em;
+    animation: detailReveal 500ms 350ms ease both;
 }
 
 .document-title {
@@ -746,6 +748,7 @@ body:has(.login-page) > main.py-4 {
     font-size: clamp(1.25rem, 2vw, 1.65rem);
     font-weight: 800;
     line-height: 1.12;
+    animation: detailReveal 550ms 500ms ease both;
 }
 
 .document-meta {
@@ -754,6 +757,7 @@ body:has(.login-page) > main.py-4 {
     gap: 4px;
     color: #7990a4;
     font-size: 0.62rem;
+    animation: detailReveal 500ms 750ms ease both;
 }
 
 .document-meta strong {
@@ -773,10 +777,12 @@ body:has(.login-page) > main.py-4 {
     height: 5px;
     border-radius: 99px;
     background: #dce8f1;
+    transform-origin: left center;
+    animation: lineReveal 550ms 900ms ease both;
 }
 
-.document-lines span:nth-child(2) { width: 84%; }
-.document-lines span:nth-child(3) { width: 61%; }
+.document-lines span:nth-child(2) { width: 84%; animation-delay: 1.05s; }
+.document-lines span:nth-child(3) { width: 61%; animation-delay: 1.2s; }
 
 .document-signature {
     position: absolute;
@@ -794,11 +800,14 @@ body:has(.login-page) > main.py-4 {
     border-bottom: 2px solid #1685be;
     border-radius: 50%;
     transform: rotate(-8deg);
+    transform-origin: center;
+    animation: signatureDraw 700ms 1.45s ease both;
 }
 
 .document-signature small {
     color: #7990a4;
     font-size: 0.5rem;
+    animation: detailReveal 450ms 1.75s ease both;
 }
 
 .document-stamp {
@@ -813,6 +822,7 @@ body:has(.login-page) > main.py-4 {
     font-weight: 800;
     letter-spacing: 0.08em;
     transform: rotate(-8deg);
+    animation: stampReveal 500ms 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .contract-notice {
@@ -829,7 +839,7 @@ body:has(.login-page) > main.py-4 {
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 12px 30px rgba(5, 28, 58, 0.2);
     color: #173d61;
-    animation: noticeFloat 5s ease-in-out infinite;
+    animation: noticeFloat 5s 2.1s ease-in-out infinite, detailReveal 550ms 1.95s ease both;
 }
 
 .notice-check {
@@ -841,6 +851,7 @@ body:has(.login-page) > main.py-4 {
     background: #e0f6ed;
     color: #13885f;
     font-weight: 800;
+    animation: checkReveal 500ms 2.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .contract-notice strong,
@@ -865,7 +876,7 @@ body:has(.login-page) > main.py-4 {
     font-size: 0.58rem;
     font-weight: 800;
     letter-spacing: 0.09em;
-    animation: noticeFloat 5s ease-in-out -2s infinite;
+    animation: noticeFloat 5s 1.5s ease-in-out infinite, detailReveal 500ms 1.4s ease both;
 }
 
 .login-card {
@@ -926,8 +937,8 @@ body:has(.login-page) > main.py-4 {
 }
 
 @keyframes contractFloat {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50% { transform: translateY(-12px) rotate(-2deg); }
+    0%, 100% { transform: translateY(0) rotate(-5deg) scale(1.1); }
+    50% { transform: translateY(-12px) rotate(-2deg) scale(1.1); }
 }
 
 @keyframes noticeFloat {
@@ -938,6 +949,37 @@ body:has(.login-page) > main.py-4 {
 @keyframes orbitDrift {
     from { transform: scale(0.94) rotate(-8deg); }
     to { transform: scale(1.04) rotate(8deg); }
+}
+
+@keyframes orbitReveal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes detailReveal {
+    from { opacity: 0; filter: blur(3px); }
+    to { opacity: 1; filter: blur(0); }
+}
+
+@keyframes lineReveal {
+    from { opacity: 0; transform: scaleX(0); }
+    to { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes signatureDraw {
+    from { transform: rotate(-8deg) scaleX(0); }
+    to { transform: rotate(-8deg) scaleX(1); }
+}
+
+@keyframes stampReveal {
+    0% { opacity: 0; transform: rotate(-16deg) scale(1.25); }
+    75% { opacity: 1; transform: rotate(-5deg) scale(0.94); }
+    100% { opacity: 1; transform: rotate(-8deg) scale(1); }
+}
+
+@keyframes checkReveal {
+    from { opacity: 0; transform: scale(0.45) rotate(-25deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
 }
 
 @keyframes loginRise {
@@ -1094,6 +1136,16 @@ body:has(.login-page) > main.py-4 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .promo-illustration * {
+        animation: none;
+    }
+
+    .promo-illustration .document-lines span,
+    .promo-illustration .document-signature span,
+    .promo-illustration .document-signature small {
+        animation: none;
+    }
+
     .promo-inner,
     .login-card,
     .contract-document,
@@ -1124,5 +1176,119 @@ body:has(.login-page) > main.py-4 {
 
     .login-form {
         width: 100%;
+    }
+}
+
+.login-split-page {
+    align-items: stretch;
+    padding: 0;
+}
+
+.login-split-page .login-container {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    min-height: 100svh;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+}
+
+.login-split-page .login-promo {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: clamp(24px, 3.5vw, 48px);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.login-split-page .login-card {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: clamp(36px, 7vw, 100px);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.login-split-page .brand-logo {
+    display: none;
+}
+
+.login-split-page .login-form {
+    max-width: 440px;
+    margin-inline: auto;
+}
+
+@media (min-width: 901px) {
+    .login-split-page .promo-inner {
+        margin-top: clamp(12px, 2.5vh, 24px);
+    }
+
+    .login-split-page .promo-illustration {
+        min-height: 0;
+        margin: 0;
+    }
+
+    .login-split-page .contract-document {
+        width: auto;
+        height: min(40vh, 340px);
+    }
+}
+
+@media (max-width: 900px) {
+    .login-split-page {
+        align-items: flex-start;
+        padding: 0;
+    }
+
+    .login-split-page .login-container {
+        width: 100%;
+        max-width: none;
+        min-height: 0;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .login-split-page .login-card {
+        order: 0;
+        min-height: 100vh;
+        min-height: 100svh;
+        padding: 40px clamp(24px, 8vw, 64px);
+    }
+
+    .login-split-page .brand-logo {
+        display: inline-block;
+    }
+
+    .login-split-page .login-promo {
+        order: 1;
+        min-height: 560px;
+        padding: 32px 24px;
+    }
+
+    .login-split-page .promo-logo {
+        display: none;
+    }
+
+    .login-split-page .promo-illustration {
+        min-height: clamp(360px, 60vw, 460px);
+        margin: 12px 0 -18px;
+    }
+
+    .login-split-page .contract-document {
+        width: clamp(230px, 46vw, 300px);
+        height: auto;
+    }
+}
+
+@media (max-width: 520px) {
+    .login-split-page .login-card {
+        padding: 32px 20px;
+    }
+
+    .login-split-page .login-promo {
+        min-height: 500px;
+        padding: 24px 20px;
     }
 }

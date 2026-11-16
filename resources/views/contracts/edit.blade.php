@@ -126,15 +126,15 @@
                                         <i class="fas fa-hashtag text-danger me-1"></i> Nomor Kontrak <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control @error('contract_number') is-invalid @enderror" id="contract_number" name="contract_number" value="{{ old('contract_number', $contract->contract_number) }}" placeholder="CTR-001-2024" required>
-                                        <button type="button" class="btn btn-outline-secondary" id="generateContractNumberBtn" title="Generate nomor kontrak">
+                                        <input type="text" class="form-control @error('contract_number') is-invalid @enderror" id="contract_number" name="contract_number" value="{{ old('contract_number', $contract->contract_number) }}" placeholder="PLD-PK-2026-11-15" required>
+                                        <button type="button" class="btn btn-outline-secondary" id="generateContractNumberBtn" title="Buat nomor dari divisi dan tanggal mulai">
                                             <i class="fas fa-sync-alt"></i>
                                         </button>
                                     </div>
                                     @error('contract_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                    <small class="form-text text-muted">Format: CTR-XXX-YYYY</small>
+                                    <small id="contractNumberHelp" class="form-text text-muted">Format: PLD-kode divisi-YYYY-MM-DD. Pilih tanggal mulai lalu tekan tombol untuk membuat nomor.</small>
                                 </div>
 
                                 <div class="col-md-4 mb-3">
@@ -795,6 +795,7 @@
             const endDateInput = document.getElementById('end_date');
             const contractNumberInput = document.getElementById('contract_number');
             const generateButton = document.getElementById('generateContractNumberBtn');
+            const contractNumberHelp = document.getElementById('contractNumberHelp');
             const pdfFilesInput = document.getElementById('pdf_files');
             const newFilesPreview = document.getElementById('newFilesPreview');
             const newFilesList = document.getElementById('newFilesList');
@@ -942,13 +943,35 @@
             });
             endDateInput.addEventListener('change', calculateDuration);
             contractNumberInput.addEventListener('blur', updateContractNumberStatus);
-            generateButton.addEventListener('click', function() {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-                contractNumberInput.value = `CTR-${year}${month}-${random}`;
-                updateContractNumberStatus();
+            generateButton.addEventListener('click', async function() {
+                if (!startDateInput.value) {
+                    contractNumberHelp.textContent = 'Pilih tanggal mulai kontrak terlebih dahulu.';
+                    contractNumberHelp.className = 'form-text text-danger';
+                    return;
+                }
+
+                generateButton.disabled = true;
+                try {
+                    const params = new URLSearchParams({ start_date: startDateInput.value });
+                    const response = await fetch(`{{ route('contracts.generate-number') }}?${params}`, {
+                        headers: { Accept: 'application/json' }
+                    });
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Nomor kontrak gagal dibuat.');
+                    }
+
+                    contractNumberInput.value = result.contract_number;
+                    updateContractNumberStatus();
+                    contractNumberHelp.textContent = 'Kode divisi diambil dari inisial nama divisi pada profil.';
+                    contractNumberHelp.className = 'form-text text-muted';
+                } catch (error) {
+                    contractNumberHelp.textContent = error.message || 'Nomor kontrak gagal dibuat.';
+                    contractNumberHelp.className = 'form-text text-danger';
+                } finally {
+                    generateButton.disabled = false;
+                }
             });
             pdfFilesInput.addEventListener('change', displayNewFiles);
             clearAllPdfBtn.addEventListener('click', resetPdfSelection);

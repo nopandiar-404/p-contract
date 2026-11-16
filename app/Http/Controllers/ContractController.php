@@ -183,6 +183,27 @@ class ContractController extends Controller
         return view('contracts.create', compact('clients', 'contractTypes'));
     }
 
+    public function generateNumber(Request $request)
+    {
+        $validated = $request->validate([
+            'start_date' => 'required|date',
+        ]);
+
+        $division = $request->user()?->division;
+        if (!Contract::divisionCode($division)) {
+            return response()->json([
+                'message' => 'Lengkapi nama divisi pada profil sebelum membuat nomor kontrak.',
+            ], 422);
+        }
+
+        return response()->json([
+            'contract_number' => Contract::generateContractNumber(
+                $validated['start_date'],
+                $division
+            ),
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

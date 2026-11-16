@@ -9,7 +9,7 @@
     <title><?php echo $__env->yieldContent('title'); ?> - SIMOKO</title>
 
     <!-- Favicon Pelindo -->
-    <link rel="icon" type="image/png" href="<?php echo e(asset('images/icon-pelindo.png')); ?>">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/crm-kontrak.png')); ?>">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,11 +30,25 @@
             --dark-color: #1a1a2e;
             --light-color: #f8f9fa;
             --sidebar-width: 260px;
+            --sidebar-blue: #0879bd;
+            --sidebar-ink: #17324d;
+            --sidebar-muted: #60788c;
+            --sidebar-line: #dce8f1;
+            --glass-surface: rgba(255, 255, 255, 0.94);
+            --glass-surface-bright: rgba(255, 255, 255, 0.98);
+            --glass-border: rgba(255, 255, 255, 0.94);
+            --glass-shadow: 0 24px 60px rgba(31, 39, 112, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.98), inset 0 -1px 0 rgba(31, 39, 112, 0.08);
+            --glass-blur: 24px;
+            --dashboard-glossy-background:
+                radial-gradient(ellipse at 16% 0%, rgba(255, 255, 255, 0.3), transparent 38%),
+                radial-gradient(ellipse at 88% 100%, rgba(255, 255, 255, 0.12), transparent 42%),
+                linear-gradient(135deg, #667eea 0%, #7169c8 52%, #764ba2 100%);
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--dashboard-glossy-background);
+            background-attachment: fixed;
             min-height: 100vh;
         }
 
@@ -47,8 +61,11 @@
         .sidebar {
             width: min(var(--sidebar-width), calc(100vw - 2rem));
             max-width: calc(100vw - 2rem);
-            background: linear-gradient(180deg, #142b40 0%, #102438 100%);
-            color: white;
+            left: 0;
+            background: linear-gradient(155deg, rgba(255, 255, 255, 0.94), rgba(246, 249, 255, 0.78));
+            -webkit-backdrop-filter: blur(24px) saturate(165%);
+            backdrop-filter: blur(24px) saturate(165%);
+            color: var(--sidebar-ink);
             position: fixed;
             top: 0;
             bottom: 0;
@@ -57,28 +74,66 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: transform 0.3s ease, width 0.3s ease, background 0.3s ease;
+            border-right: 1px solid var(--glass-border);
+            transition: transform 0.28s cubic-bezier(0.2, 0.75, 0.25, 1), width 0.3s ease, background 0.3s ease;
             z-index: 1000;
-            box-shadow: 10px 0 30px rgba(10, 34, 54, 0.2);
+            box-shadow: 12px 0 36px rgba(31, 39, 112, 0.14), inset -1px 0 0 rgba(255, 255, 255, 0.72);
         }
 
         .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
             padding: 18px 16px;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.72);
             flex: 0 0 auto;
         }
 
         .sidebar-brand h3 {
+            flex: 1 1 auto;
+            min-width: 0;
+            height: 50px;
             margin: 0;
-            font-weight: 600;
-            color: #fff;
+            font-weight: 700;
+            font-size: 1.35rem;
+            color: var(--sidebar-ink);
             justify-content: flex-start;
+        }
+
+        .sidebar-brand .brand-name {
+            color: #0879bd;
+            font-weight: 750;
+            letter-spacing: 0.045em;
+            background: linear-gradient(110deg, #07518f 0%, #0879bd 34%, #66d5ff 50%, #0879bd 68%, #164da8 100%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.82));
+            animation: simokoLiquidShine 7s ease-in-out infinite alternate;
+        }
+
+        @keyframes simokoLiquidShine {
+            from {
+                background-position: 0 50%;
+            }
+
+            to {
+                background-position: 100% 50%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .sidebar-brand .brand-name {
+                animation: none;
+            }
         }
 
         .sidebar-brand .logo-icon {
             font-size: 24px;
-            color: #4361ee;
+            color: var(--sidebar-blue);
             margin-right: 10px;
         }
 
@@ -88,41 +143,118 @@
             overflow-y: auto;
             overscroll-behavior-y: contain;
             scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
-            padding: 16px 0 20px;
+            scrollbar-color: rgba(8, 121, 189, 0.24) transparent;
+            padding: 14px 0 20px;
         }
 
         .nav-link {
-            color: rgba(255, 255, 255, 0.7);
-            padding: 12px 20px;
-            margin: 5px 10px;
-            border-radius: 8px;
-            transition: all 0.3s;
+            color: #536c80;
+            padding: 11px 16px;
+            margin: 4px 10px;
+            border-radius: 10px;
+            transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             align-items: center;
             text-decoration: none;
-            min-height: 48px;
+            min-height: 46px;
             border-left: 3px solid transparent;
+            font-weight: 500;
         }
 
         .nav-link:hover,
         .nav-link.active {
-            background: rgba(0, 114, 188, 0.22);
-            color: white;
-            border-left-color: #0072bc;
+            background: linear-gradient(90deg, #e8f4fb 0%, #f6fbff 100%);
+            color: #075d95;
+            border-left-color: var(--sidebar-blue);
             transform: none;
+            box-shadow: inset 0 0 0 1px rgba(8, 121, 189, 0.06);
+        }
+
+        .nav-link.active {
+            font-weight: 600;
+        }
+
+        .nav-link:focus-visible {
+            outline: 3px solid rgba(8, 121, 189, 0.28);
+            outline-offset: 2px;
         }
 
         .nav-link i {
             width: 24px;
             text-align: center;
-            margin-right: 10px;
+            margin-right: 12px;
             font-size: 18px;
+            color: #6b8aa2;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: var(--sidebar-blue);
         }
 
         .nav-link .badge {
             margin-left: auto;
             background: #e31e24;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 24px;
+            height: 24px;
+            padding: 0 7px;
+            border-radius: 999px;
+            color: #fff;
+            font-size: 11px;
+            line-height: 1;
+        }
+
+        .sidebar .sidebar-summary {
+            margin: 18px 12px 0;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(239, 248, 255, 0.86), rgba(221, 240, 252, 0.64));
+            -webkit-backdrop-filter: blur(14px) saturate(150%);
+            backdrop-filter: blur(14px) saturate(150%);
+            box-shadow: 0 10px 24px rgba(31, 39, 112, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+            color: var(--sidebar-ink);
+        }
+
+        .sidebar-summary .text-muted {
+            color: var(--sidebar-muted) !important;
+        }
+
+        .sidebar-summary .progress {
+            height: 5px;
+            background: #d2e5f2;
+        }
+
+        .sidebar-summary .progress-bar {
+            background: linear-gradient(90deg, #0879bd, #26a8d1);
+        }
+
+        .sidebar-summary h5 {
+            color: var(--sidebar-ink);
+        }
+
+        .sidebar-close {
+            display: none;
+            flex: 0 0 auto;
+            width: 38px;
+            height: 38px;
+            place-items: center;
+            padding: 0;
+            border: 1px solid var(--sidebar-line);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--sidebar-blue);
+        }
+
+        .sidebar-close:focus-visible {
+            outline: 3px solid rgba(8, 121, 189, 0.28);
+            outline-offset: 2px;
+        }
+
+        .menu-toggle {
+            display: none;
         }
 
         /* Main Content */
@@ -130,48 +262,96 @@
             flex: 1;
             min-width: 0;
             margin-left: var(--sidebar-width);
-            padding: 20px;
+            padding: 8px 20px 20px;
             transition: all 0.3s;
         }
 
         /* Header */
         .top-bar {
-            background: white;
+            background: linear-gradient(115deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9) 54%, rgba(255, 255, 255, 0.96));
             padding: 15px 20px;
-            border-radius: 15px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--glass-border);
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            z-index: 20;
+            margin-top: -8px;
+            margin-left: -20px;
+            margin-right: -20px;
             margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 18px;
             align-items: center;
+        }
+
+        .page-title {
+            min-width: 0;
         }
 
         .page-title h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: clamp(20px, 2vw, 24px);
             font-weight: 600;
             color: var(--dark-color);
+            overflow-wrap: anywhere;
         }
 
         .page-title p {
             margin: 5px 0 0;
             color: #6c757d;
             font-size: 14px;
+            line-height: 1.4;
         }
 
         .user-menu {
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: flex-end;
+            gap: 12px;
+            min-width: 0;
+            flex-wrap: nowrap;
+        }
+
+        .user-menu .dropdown {
+            flex: 0 0 auto;
+        }
+
+        .user-menu .dropdown > .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            white-space: nowrap;
         }
 
         .notification-btn {
             position: relative;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: #6c757d;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            width: 42px;
+            height: 42px;
+            border: 1px solid #dce8f1;
+            border-radius: 10px;
+            background: #f7fbff;
+            font-size: 18px;
+            color: #0879bd;
             cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+        }
+
+        .notification-btn:hover {
+            background: #eaf5fc;
+            box-shadow: 0 4px 12px rgba(8, 121, 189, 0.12);
+        }
+
+        .notification-btn:focus-visible {
+            outline: 3px solid rgba(8, 121, 189, 0.24);
+            outline-offset: 2px;
         }
 
         .notification-badge {
@@ -191,19 +371,23 @@
 
         /* Cards */
         .stat-card {
-            background: white;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9) 58%, rgba(255, 255, 255, 0.96));
+            border: 1px solid var(--glass-border);
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            backdrop-filter: blur(var(--glass-blur)) saturate(165%);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--glass-shadow);
             transition: transform 0.3s, box-shadow 0.3s;
             height: 100%;
             position: relative;
+            z-index: 1;
             overflow: hidden;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 24px 52px rgba(31, 39, 112, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.95);
         }
 
         .stat-card::before {
@@ -291,10 +475,15 @@
 
         /* Tables */
         .data-table {
-            background: white;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92) 58%, rgba(255, 255, 255, 0.96));
+            border: 1px solid var(--glass-border);
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            backdrop-filter: blur(var(--glass-blur)) saturate(165%);
             border-radius: 15px;
             overflow: scroll;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            z-index: 1;
         }
 
         .table-header {
@@ -400,17 +589,27 @@
         /* Responsive Design */
         @media (max-width: 992px) {
             .sidebar {
-                transform: translateX(-100%);
+                transform: translateX(-105%);
+                visibility: hidden;
+                transition: transform 0.28s cubic-bezier(0.2, 0.75, 0.25, 1), visibility 0s linear 0.28s;
             }
 
             .sidebar.active {
                 transform: translateX(0);
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+                visibility: visible;
+                transition: transform 0.28s cubic-bezier(0.2, 0.75, 0.25, 1), visibility 0s;
+                box-shadow: 18px 0 50px rgba(7, 38, 72, 0.22);
             }
 
             .main-content {
                 margin-left: 0;
-                padding: 18px 16px 30px;
+                padding: 8px 16px 30px;
+            }
+
+            .main-content > .top-bar {
+                margin-left: -16px;
+                margin-right: -16px;
+                border-radius: 0 0 12px 12px;
             }
 
             .content-wrapper {
@@ -427,32 +626,39 @@
                 margin-bottom: 1rem;
             }
 
-            .search-box {
-                width: 100%;
-                max-width: 100%;
+            .top-bar {
+                gap: 14px;
+                padding: 14px 16px;
             }
 
-            .search-box input {
-                width: 100%;
+            .user-menu {
+                gap: 8px;
+                justify-content: flex-end;
             }
 
             .menu-toggle {
-                display: block;
-                border: none;
-                background: rgba(255, 255, 255, 0.95);
-                color: #4361ee;
-                padding: 0.55rem 0.75rem;
-                border-radius: 999px;
-                box-shadow: 0 6px 18px rgba(8, 35, 79, 0.12);
+                display: grid;
+                place-items: center;
+                width: 42px;
+                height: 42px;
+                padding: 0;
+                border: 1px solid #d5e6f2;
+                border-radius: 12px;
+                background: #fff;
+                color: var(--sidebar-blue);
+                box-shadow: 0 5px 16px rgba(8, 35, 79, 0.1);
                 transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
             }
 
-            .menu-toggle:hover,
-            .menu-toggle:focus {
+            .menu-toggle:hover {
                 transform: translateY(-1px);
-                background: #ffffff;
+                background: #f6fbff;
                 box-shadow: 0 10px 25px rgba(8, 35, 79, 0.16);
-                outline: none;
+            }
+
+            .menu-toggle:focus-visible {
+                outline: 3px solid rgba(8, 121, 189, 0.28);
+                outline-offset: 2px;
             }
 
             .menu-toggle i {
@@ -462,29 +668,65 @@
             .menu-toggle.open i {
                 transform: rotate(90deg);
             }
+
+            .sidebar-close {
+                display: grid;
+            }
         }
 
         @media (max-width: 768px) {
             .top-bar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 12px;
                 align-items: stretch;
+                padding: 14px 16px;
+                text-align: left;
             }
 
             .user-menu {
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .search-box {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto auto auto;
+                grid-template-areas: "search notification profile toggle";
+                align-items: center;
+                justify-content: stretch;
+                gap: 8px;
                 width: 100%;
-                max-width: none;
+                min-width: 0;
             }
 
-            .notification-btn {
+            .user-menu .search-box {
+                grid-area: search;
                 width: auto;
+                max-width: none;
+                min-width: 0;
+            }
+
+            .user-menu .search-box input {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .user-menu .notification-btn {
+                grid-area: notification;
+                width: 42px;
+                height: 42px;
+            }
+
+            .user-menu .dropdown {
+                grid-area: profile;
+                justify-self: end;
+                min-width: 0;
+            }
+
+            .user-menu .dropdown > .btn {
+                max-width: 100%;
+                white-space: nowrap;
+            }
+
+            .user-menu .menu-toggle {
+                grid-area: toggle;
+                justify-self: end;
             }
 
             .page-title h1 {
@@ -517,6 +759,41 @@
 
             .btn-group-actions .btn {
                 width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                gap: 10px;
+                padding: 14px;
+            }
+
+            .user-menu {
+                grid-template-columns: minmax(0, 1fr) auto auto;
+                grid-template-areas: "search search search" "profile notification toggle";
+            }
+
+            .user-menu .dropdown {
+                justify-self: start;
+            }
+
+            .user-menu .dropdown > .btn {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .user-menu .user-name {
+                display: none;
+            }
+
+            .user-menu .dropdown > .btn {
+                display: grid;
+                place-items: center;
+                width: 42px;
+                height: 42px;
+                padding: 0;
             }
         }
 
@@ -578,28 +855,28 @@
 
         /* Responsive logo */
         .sidebar-brand img.site-logo {
-            height: 25px;
+            height: 46px;
             width: auto;
             max-width: 100%;
             display: inline-block;
             vertical-align: middle;
             object-fit: contain;
-            filter: brightness(0) invert(1);
+            filter: none;
         }
 
         @media (max-width: 1200px) {
             .sidebar-brand img.site-logo {
-                height: 24px;
+                height: 42px;
             }
         }
 
         @media (max-width: 768px) {
             .sidebar-brand img.site-logo {
-                height: 20px;
+                height: 36px;
             }
 
             .sidebar-brand {
-                padding: 12px 10px;
+                padding: 14px 12px;
             }
 
             .page-title h1 {
@@ -608,14 +885,13 @@
         }
 
         @media (max-width: 480px) {
-
-            /* On very small screens keep the logo but hide the text to preserve space */
-            .sidebar-brand span {
-                display: none;
+            .sidebar-brand .brand-name {
+                font-size: 1.05rem;
+                letter-spacing: 0.03em;
             }
 
             .sidebar-brand img.site-logo {
-                height: 28px;
+                height: 36px;
             }
         }
 
@@ -629,7 +905,17 @@
         .card,
         .data-table {
             border-radius: var(--card-radius);
-            box-shadow: var(--card-shadow);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .content-wrapper .card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+            border: 1px solid var(--glass-border);
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            backdrop-filter: blur(var(--glass-blur)) saturate(165%);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            z-index: 1;
         }
 
         .data-table {
@@ -818,12 +1104,15 @@
 
     <div class="dashboard-wrapper">
         <!-- Sidebar -->
-        <aside class="sidebar" id="dashboardSidebar">
+        <aside class="sidebar" id="dashboardSidebar" aria-label="Menu navigasi">
             <div class="sidebar-brand">
-                <h3 class="d-flex align-items-center justify-content-center gap-2">
-                    <img src="<?php echo e(asset('images/logo-pelindo.png')); ?>" alt="Pelindo" class="site-logo" />
-                    <span style="font-weight:600; height:42px;">Contract</span>
+                <h3 class="d-flex align-items-center gap-2">
+                    <img src="<?php echo e(asset('images/crm-kontrak.png')); ?>" alt="CRM Kontrak" class="site-logo" />
+                    <span class="brand-name">SIMOKO</span>
                 </h3>
+                <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Tutup menu navigasi">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
             </div>
 
             <nav class="sidebar-menu" aria-label="Navigasi utama">
@@ -868,7 +1157,7 @@
                     class="nav-link <?php echo e(request()->routeIs('notifications.*') ? 'active' : ''); ?>">
                     <i class="fas fa-bell"></i>
                     <span>Notifikasi</span>
-                    <span class="badge"><?php echo e($unreadNotifications ?? 0); ?></span>
+                    <span class="badge" data-unread-notifications><?php echo e($unreadNotifications ?? 0); ?></span>
                 </a>
 
                 <a href="<?php echo e(route('reports')); ?>" class="nav-link">
@@ -881,11 +1170,11 @@
                     <span>Pengaturan</span>
                 </a>
 
-                <div class="card bg-dark border-0">
+                <div class="card sidebar-summary">
                     <div class="card-body p-3">
                         <small class="text-muted">Total Kontrak</small>
                         <h5 class="mb-0"><?php echo e($total); ?></h5>
-                        <div class="progress mt-2" style="height: 3px;">
+                        <div class="progress mt-2">
                             <div class="progress-bar bg-primary dashboard-progress" data-progress="<?php echo e($percentage); ?>"></div>
                         </div>
                         <small class="text-muted"><?php echo e($active); ?> aktif</small>
@@ -911,7 +1200,7 @@
 
                     <button class="notification-btn" id="notificationBtn">
                         <i class="fas fa-bell"></i>
-                        <span class="notification-badge"><?php echo e($unreadNotifications ?? 0); ?></span>
+                        <span class="notification-badge" data-unread-notifications><?php echo e($unreadNotifications ?? 0); ?></span>
                     </button>
 
                     <div class="dropdown">
@@ -937,7 +1226,7 @@
                         </ul>
                     </div>
 
-                    <button class="btn btn-primary d-lg-none menu-toggle" id="menuToggle" type="button"
+                    <button class="btn menu-toggle" id="menuToggle" type="button"
                         aria-label="Buka menu navigasi" aria-controls="dashboardSidebar" aria-expanded="false">
                         <i class="fas fa-bars"></i>
                     </button>
@@ -964,6 +1253,7 @@
         // Mobile menu drawer controls
         (function() {
             const toggle = document.getElementById('menuToggle');
+            const close = document.getElementById('sidebarClose');
             const sidebar = document.querySelector('.sidebar');
             const mobileMenu = window.matchMedia('(max-width: 992px)');
 
@@ -1002,6 +1292,7 @@
             }
 
             function setSidebarOpen(isOpen) {
+                const wasOpen = sidebar.classList.contains('active');
                 const isActive = mobileMenu.matches && isOpen;
                 const overlay = isActive ? createOverlay() : document.querySelector('.mobile-sidebar-overlay');
 
@@ -1015,12 +1306,19 @@
                 updateToggleIcon(isActive);
 
                 if (isActive) {
-                    sidebar.querySelector('.nav-link')?.focus();
+                    const activeLink = sidebar.querySelector('.nav-link.active') || sidebar.querySelector('.nav-link');
+                    activeLink?.focus();
+                } else if (wasOpen && mobileMenu.matches) {
+                    toggle.focus();
                 }
             }
 
             toggle.addEventListener('click', function() {
                 setSidebarOpen(!sidebar.classList.contains('active'));
+            });
+
+            close.addEventListener('click', function() {
+                setSidebarOpen(false);
             });
 
             sidebar.querySelectorAll('.nav-link').forEach(function(link) {
@@ -1061,7 +1359,7 @@
 
         // Auto-refresh data every 60 seconds
         setInterval(function() {
-            fetch('/api/dashboard/stats')
+            fetch("<?php echo e(route('api.dashboard.stats')); ?>")
                 .then(response => {
                     const contentType = (response.headers.get('Content-Type') || '').toLowerCase();
                     if (!response.ok) {
@@ -1080,22 +1378,22 @@
                 .then(data => {
                     if (data) updateStats(data);
                 })
-                .catch(error => console.log('Auto-refresh error:', error));
+                .catch(error => console.error('Auto-refresh error:', error));
         }, 60000);
 
         function updateStats(data) {
             // Update stats cards
             document.querySelectorAll('[data-stat]').forEach(element => {
                 const stat = element.getAttribute('data-stat');
-                if (data[stat]) {
-                    element.textContent = data[stat];
+                if (Object.prototype.hasOwnProperty.call(data, stat)) {
+                    element.textContent = String(data[stat]);
                 }
             });
         }
 
         // Real-time notifications with WebSocket simulation
         function checkNewNotifications() {
-            fetch('/api/notifications/unread-count')
+            fetch("<?php echo e(route('api.notifications.unread-count')); ?>")
                 .then(response => {
                     const contentType = (response.headers.get('Content-Type') || '').toLowerCase();
                     if (!response.ok) {
@@ -1113,21 +1411,31 @@
                 })
                 .then(data => {
                     if (!data) return;
-                    const badge = document.querySelector('.notification-badge');
-                    const count = parseInt(data.count || 0, 10);
+                    const badge = document.querySelector('.notification-badge[data-unread-notifications]');
+                    const count = Number(data.count);
+                    if (!badge || !Number.isSafeInteger(count) || count < 0) {
+                        console.error('Invalid unread notification count response');
+                        return;
+                    }
+
+                    const previousCount = Number.parseInt(
+                        badge.getAttribute('data-last') || badge.textContent || '0',
+                        10
+                    );
+                    document.querySelectorAll('[data-unread-notifications]').forEach(notificationBadge => {
+                        notificationBadge.textContent = String(count);
+                    });
                     if (count > 0) {
-                        badge.textContent = count;
                         badge.style.display = 'flex';
 
                         // Show notification toast only when count increases
-                        if (count > (parseInt(badge.getAttribute('data-last') || '0', 10))) {
+                        if (count > previousCount) {
                             showNotificationToast('Anda memiliki ' + count + ' notifikasi baru');
                         }
-                        badge.setAttribute('data-last', String(count));
                     } else {
                         badge.style.display = 'none';
-                        badge.setAttribute('data-last', '0');
                     }
+                    badge.setAttribute('data-last', String(count));
                 })
                 .catch(err => console.error('checkNewNotifications error', err));
         }
@@ -1144,9 +1452,10 @@
                         <strong class="me-auto">Notifikasi Baru</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
                     </div>
-                    <div class="toast-body">${message}</div>
+                    <div class="toast-body"></div>
                 </div>
             `;
+            toast.querySelector('.toast-body').textContent = message;
             document.body.appendChild(toast);
 
             // Auto remove after 5 seconds
@@ -1175,8 +1484,6 @@
         //         '<i class="fas fa-moon"></i>';
         // });
 
-        document.querySelector('.user-menu .dropdown').parentNode.insertBefore(themeToggle, document.querySelector(
-            '.user-menu .dropdown'));
     </script>
 
     <script>
