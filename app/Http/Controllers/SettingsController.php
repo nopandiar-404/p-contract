@@ -46,50 +46,13 @@ class SettingsController extends Controller
             $gracePeriodContracts = 0;
         }
         
-        $gmailCreds = \App\Services\GmailService::getCredentials();
-        $gmailWatch = [
-            'active'          => (bool) \Illuminate\Support\Facades\Cache::get('gmail_watch_active', false),
-            'topic'           => \Illuminate\Support\Facades\Cache::get('gmail_watch_topic') ?: $gmailCreds['topic_name'],
-            'expiration'      => \Illuminate\Support\Facades\Cache::get('gmail_watch_expiration'),
-            'last_history_id' => \Illuminate\Support\Facades\Cache::get('gmail_last_history_id'),
-        ];
-
         return view('settings.index', [
             'user'                 => $user,
             'unreadNotifications'  => $unreadNotifications,
             'totalContracts'       => $totalContracts,
             'activeContracts'      => $activeContracts,
             'gracePeriodContracts' => $gracePeriodContracts,
-            'gmailCreds'           => $gmailCreds,
-            'gmailWatch'           => $gmailWatch,
         ]);
-    }
-
-    /**
-     * Update konfigurasi Gmail API
-     */
-    public function updateGmail(Request $request)
-    {
-        $validated = $request->validate([
-            'gmail_client_id'     => 'nullable|string|max:255',
-            'gmail_client_secret' => 'nullable|string|max:255',
-            'gmail_refresh_token' => 'nullable|string|max:255',
-            'gmail_pubsub_topic'  => 'nullable|string|max:255',
-            'gmail_from_email'    => 'nullable|email|max:255',
-            'gmail_from_name'     => 'nullable|string|max:255',
-        ]);
-
-        \App\Services\GmailService::updateEnv([
-            'GMAIL_CLIENT_ID'     => $validated['gmail_client_id'] ?? '',
-            'GMAIL_CLIENT_SECRET' => $validated['gmail_client_secret'] ?? '',
-            'GMAIL_REFRESH_TOKEN' => $validated['gmail_refresh_token'] ?? '',
-            'GMAIL_PUBSUB_TOPIC'  => $validated['gmail_pubsub_topic'] ?? '',
-            'GMAIL_FROM_EMAIL'    => $validated['gmail_from_email'] ?? '',
-            'GMAIL_FROM_NAME'     => $validated['gmail_from_name'] ?? '',
-        ]);
-
-        return redirect()->to(route('settings.index') . '#gmail')
-            ->with('success', 'Konfigurasi Gmail API berhasil disimpan.');
     }
 
     /**
@@ -149,7 +112,6 @@ class SettingsController extends Controller
             'timezone' => 'required|string',
             'notifications_email' => 'boolean',
             'notifications_dashboard' => 'boolean',
-            'notifications_whatsapp' => 'boolean',
             'theme_dark' => 'boolean',
         ]);
 
@@ -167,7 +129,6 @@ class SettingsController extends Controller
             'user_timezone' => $validated['timezone'],
             'notifications_email' => $validated['notifications_email'] ?? false,
             'notifications_dashboard' => $validated['notifications_dashboard'] ?? false,
-            'notifications_whatsapp' => $validated['notifications_whatsapp'] ?? false,
             'theme_dark' => $validated['theme_dark'] ?? false,
         ]);
 

@@ -4,7 +4,6 @@ This document explains how to configure SMTP for Laravel using Gmail's SMTP (App
 
 ## Recommended approach
 - If you prefer a simple SMTP setup, use Gmail SMTP with an App Password (requires 2-Step Verification).
-- If you need server-to-server with OAuth, continue using the Gmail API (we added helpers). App Password is easier for most deployments.
 - Do not use your regular Gmail account password for `MAIL_PASSWORD`; Gmail blocks SMTP authentication unless an App Password is used or OAuth is enabled.
 
 ## .env settings (example)
@@ -20,16 +19,6 @@ MAIL_PASSWORD=your-app-password  # Gmail App Password, not your regular account 
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=your-email@gmail.com
 MAIL_FROM_NAME="Your App Name"
-```
-
-If you prefer Gmail OAuth, enable Gmail API and add these values instead:
-
-```env
-GMAIL_CLIENT_ID=
-GMAIL_CLIENT_SECRET=
-GMAIL_REFRESH_TOKEN=
-GMAIL_FROM_EMAIL=your-email@gmail.com
-GMAIL_FROM_NAME="Your App Name"
 ```
 
 ## How to get a Google App Password
@@ -58,7 +47,7 @@ Notes:
 Start the queue worker (we queue mail in this app):
 
 ```bash
-php artisan queue:work --queue=mail,whatsapp
+php artisan queue:work --queue=mail
 ```
 
 Quick test using Tinker (sends immediately via configured mailer):
@@ -69,25 +58,6 @@ php artisan tinker
 ```
 
 If you see no errors and the email arrives, SMTP is correctly configured. Check `storage/logs/laravel.log` for errors.
-
-## When to use Gmail API instead
-
-- Use the Gmail API when you need OAuth-managed access, domain-wide delegation, or to send on behalf of other users.
-- Our repo includes `GmailService` and `GmailAuthController` if you prefer the OAuth route.
-
-## Gmail API environment variables
-
-To enable Gmail API reminders, add these variables to your `.env`:
-
-```env
-GMAIL_CLIENT_ID=
-GMAIL_CLIENT_SECRET=
-GMAIL_REFRESH_TOKEN=
-GMAIL_FROM_EMAIL=your-email@gmail.com
-GMAIL_FROM_NAME="Your App Name"
-```
-
-The application will use these settings to send 60-day contract reminder emails through Gmail.
 
 ## Security & deployment tips
 

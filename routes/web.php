@@ -12,17 +12,9 @@ use App\Http\Controllers\SettingsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\DashboardApiController;
-use App\Http\Controllers\GmailAuthController;
-use App\Http\Controllers\GmailWebhookController;
 
 // Ensure {contract} route parameter only matches numeric IDs so named routes like /contracts/export are not treated as {contract}
 Route::pattern('contract', '[0-9]+');
-
-// Google Cloud Pub/Sub Webhook for Gmail Push Notifications (Unauthenticated & CSRF exempt)
-Route::post('/api/gmail/webhook', [GmailWebhookController::class, 'handleWebhook'])->name('gmail.webhook');
-Route::post('/gmail/webhook', [GmailWebhookController::class, 'handleWebhook']);
-Route::post('/gmail/webhook/test', [GmailWebhookController::class, 'testWebhook'])->name('gmail.webhook.test');
-
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -30,7 +22,7 @@ Route::get('/', function () {
 
 
 
-// Route dashboard dilindungi oleh middleware auth dan dibatasi 10 permintaan per menit
+// Route dashboard dilindungi oleh middleware auth
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/grace-period', [DashboardController::class, 'gracePeriodReport'])->name('dashboard.grace-period');
@@ -51,7 +43,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile.index');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
-    Route::put('/settings/gmail', [SettingsController::class, 'updateGmail'])->name('settings.gmail.update');
     Route::post('/settings/change-password', [SettingsController::class, 'changePassword'])->name('settings.changePassword');
 
     // Exports: declare before resource routes so '/contracts/export' is matched explicitly
@@ -65,22 +56,9 @@ Route::middleware('auth')->group(function () {
         ->name('contracts.generate-number');
     Route::post('/contracts/{contract}/renew', [ContractController::class, 'renew'])
         ->name('contracts.renew');
-    // Send reminder (WhatsApp / push)
+    // Create an in-app contract reminder.
     Route::post('/contracts/{contract}/send-reminder', [ContractController::class, 'sendReminder'])
         ->name('contracts.send-reminder');
-    // Send reminder via Gmail API
-    Route::post('/contracts/{contract}/send-gmail-reminder', [ContractController::class, 'sendGmailReminder'])
-        ->name('contracts.send-gmail-reminder');
-
-    // Gmail Watch & Pub/Sub management
-    Route::post('/gmail/watch', [GmailWebhookController::class, 'watch'])->name('gmail.watch');
-    Route::post('/gmail/stop', [GmailWebhookController::class, 'stop'])->name('gmail.stop');
-    Route::get('/gmail/watch/status', [GmailWebhookController::class, 'status'])->name('gmail.watch.status');
-
-    // Gmail OAuth authorization and callback routes
-    Route::get('/gmail/oauth', [GmailAuthController::class, 'redirect'])->name('gmail.oauth');
-    Route::get('/gmail/callback', [GmailAuthController::class, 'callback'])->name('gmail.callback');
-
     Route::post('/contracts/{contract}/terminate', [ContractController::class, 'terminate'])
         ->name('contracts.terminate');
     Route::get('/contracts/statistics', [ContractController::class, 'statistics'])
@@ -161,20 +139,6 @@ Route::middleware('auth')->group(function () {
             return view('dashboard.grace-period-report', ['contracts' => $contracts]);
         })->name('preview.grace-period');
 
-        // Local-only WhatsApp health check
-        Route::get('/debug/health/whatsapp', function () {
-            $phoneId = config('services.whatsapp.phone_number_id') ?? env('WHATSAPP_PHONE_NUMBER_ID');
-            $accessToken = config('services.whatsapp.access_token') ?? env('WHATSAPP_ACCESS_TOKEN');
-            $apiUrl = config('services.whatsapp.api_url') ?? env('WHATSAPP_API_URL');
-
-            return response()->json([
-                'configured' => !empty($accessToken) && (!empty($phoneId) || !empty($apiUrl)),
-                'phone_number_id' => $phoneId ?: null,
-                'access_token_set' => !empty($accessToken),
-                'api_url' => $apiUrl ?: null,
-            ]);
-        })->name('debug.health.whatsapp');
-
         // Dev-only quick delete for automated tests (local/debug only)
         Route::get('/dev/contracts-delete/{id}', function ($id) {
             $contract = \App\Models\Contract::find($id);
@@ -189,7 +153,6 @@ Route::middleware('auth')->group(function () {
             }
         })->name('dev.contracts.delete');
 
-        // Gmail OAuth routes are registered in the authenticated routes above.
     }
 });
 

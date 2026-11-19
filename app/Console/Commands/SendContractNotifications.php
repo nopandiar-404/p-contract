@@ -19,7 +19,7 @@ class SendContractNotifications extends Command
      *
      * @var string
      */
-    protected $description = 'Check contracts and dispatch WhatsApp reminder notifications';
+    protected $description = 'Check contracts and create notifications';
 
     /**
      * Execute the console command.
@@ -45,7 +45,7 @@ class SendContractNotifications extends Command
             }
         }
 
-        $this->info('Done. WhatsApp jobs are dispatched to the `whatsapp` queue (if configured).');
+        $this->info('Done.');
 
         return 0;
     }

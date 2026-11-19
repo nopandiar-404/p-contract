@@ -349,8 +349,6 @@
                     });
             });
 
-            // WhatsApp health check is provided by shared partial include
-
             // Print styles
             const printBtn = document.querySelector('[onclick="window.print()"]');
             if (printBtn) {

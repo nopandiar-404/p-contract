@@ -11,12 +11,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->validateCsrfTokens(except: [
-            'api/gmail/webhook',
-            'api/gmail/webhook/*',
-            'gmail/webhook',
-            'gmail/webhook/*',
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

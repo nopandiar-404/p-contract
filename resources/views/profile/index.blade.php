@@ -202,7 +202,6 @@
 
                         <input type="hidden" name="notifications_email" value="{{ session('notifications_email', true) ? 1 : 0 }}">
                         <input type="hidden" name="notifications_dashboard" value="{{ session('notifications_dashboard', true) ? 1 : 0 }}">
-                        <input type="hidden" name="notifications_whatsapp" value="{{ session('notifications_whatsapp', false) ? 1 : 0 }}">
 
                         <div class="d-flex flex-wrap gap-2 align-items-center mt-4">
                             <button type="submit" class="btn btn-primary">

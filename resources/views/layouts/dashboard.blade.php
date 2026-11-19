@@ -1391,7 +1391,8 @@
             });
         }
 
-        // Real-time notifications with WebSocket simulation
+        let notificationsInitialized = false;
+
         function checkNewNotifications() {
             fetch("{{ route('api.notifications.unread-count') }}")
                 .then(response => {
@@ -1424,21 +1425,25 @@
                     );
                     document.querySelectorAll('[data-unread-notifications]').forEach(notificationBadge => {
                         notificationBadge.textContent = String(count);
+                        notificationBadge.style.display = count > 0 ? '' : 'none';
                     });
                     if (count > 0) {
                         badge.style.display = 'flex';
 
-                        // Show notification toast only when count increases
-                        if (count > previousCount) {
+                        if (notificationsInitialized && count > previousCount) {
                             showNotificationToast('Anda memiliki ' + count + ' notifikasi baru');
                         }
                     } else {
                         badge.style.display = 'none';
                     }
                     badge.setAttribute('data-last', String(count));
+                    notificationsInitialized = true;
                 })
                 .catch(err => console.error('checkNewNotifications error', err));
         }
+
+        window.refreshNotificationCount = checkNewNotifications;
+        checkNewNotifications();
 
         function showNotificationToast(message) {
             // Create toast element

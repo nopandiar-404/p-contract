@@ -145,18 +145,6 @@
             color: #fff;
         }
 
-        .contract-detail-page #sendReminderBtn {
-            border-color: #8ecae6;
-            background: #8ecae6;
-            color: var(--contract-navy);
-        }
-
-        .contract-detail-page #sendReminderBtn:hover {
-            border-color: #72b6d9;
-            background: #72b6d9;
-            color: var(--contract-navy);
-        }
-
         .contract-detail-page .contract-hero .btn-warning,
         .contract-detail-page .quick-actions .btn-warning {
             border-color: #ebb917;
@@ -1072,10 +1060,12 @@
                             <i class="fas fa-edit me-2"></i> Edit Kontrak
                         </a>
 
-                        <?php if($contract->status === 'active' || $contract->status === 'grace_period'): ?>
-                            <button id="sendReminderBtn" class="btn btn-primary" onclick="sendReminder()">
-                                <i class="fas fa-bell me-2"></i> Kirim Reminder
+                        <?php if(in_array($contract->status, ['active', 'grace_period'], true)): ?>
+                            <button type="button" class="btn btn-outline-danger" id="sendContractReminder"
+                                data-reminder-url="<?php echo e(route('contracts.send-reminder', $contract)); ?>">
+                                <i class="fas fa-bell me-2" aria-hidden="true"></i> Kirim Reminder
                             </button>
+                            <div id="contractReminderFeedback" class="small" role="status" aria-live="polite"></div>
                         <?php endif; ?>
 
                         <?php if($contract->status === 'active'): ?>
@@ -1482,142 +1472,47 @@
             }
         });
 
-        function sendReminder() {
-            if (!confirm('Kirim reminder untuk kontrak ini?')) return;
+        document.getElementById('sendContractReminder')?.addEventListener('click', async function () {
+            if (!confirm('Kirim reminder kepada klien dan buat notifikasi kontrak?')) return;
 
-            const btn = document.getElementById('sendReminderBtn');
-            if (btn) btn.disabled = true;
+            const button = this;
+            const feedback = document.getElementById('contractReminderFeedback');
+            const originalContent = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Mengirim...';
+            feedback.textContent = '';
+            feedback.className = 'small';
 
-            showLoading('Mengirim reminder...');
-
-            fetch("<?php echo e(route('contracts.send-reminder', $contract)); ?>", {
+            try {
+                const response = await fetch(button.dataset.reminderUrl, {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
                         'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({})
-                })
-                .then(async (res) => {
-                    hideLoading();
-                    if (!res.ok) {
-                        const err = await res.json().catch(() => ({}));
-                        showToast(err.message || 'Gagal mengirim reminder', 'error');
-                        if (btn) btn.disabled = false;
-                        return;
-                    }
-                    const data = await res.json();
-                    if (data.success) {
-                        showToast(data.message || 'Reminder berhasil dikirim', 'success');
-
-                        if (data.notification && data.notification.id) {
-                            appendNotificationToList(data.notification);
-                            pollNotificationStatus(data.notification.id);
-                        }
-                    } else {
-                        showToast(data.message || 'Gagal mengirim reminder', 'error');
-                    }
-                    if (btn) btn.disabled = false;
-                })
-                .catch((err) => {
-                    hideLoading();
-                    if (btn) btn.disabled = false;
-                    showToast('Gagal mengirim reminder (network error)', 'error');
-                    console.error(err);
+                    body: JSON.stringify({}),
                 });
-        }
+                const result = await response.json().catch(() => ({}));
+                const success = response.ok && result.success === true;
 
-        function appendNotificationToList(notification) {
-            const containerSelector = '.card .card-body .list-group.list-group-flush';
-            let list = document.querySelector(containerSelector);
-
-            // If list doesn't exist yet, create it inside the notifications card body
-            if (!list) {
-                const cardBody = document.querySelector('.card .card-body');
-                if (!cardBody) return;
-                list = document.createElement('div');
-                list.className = 'list-group list-group-flush';
-                cardBody.insertBefore(list, cardBody.firstChild);
+                feedback.textContent = result.message || (success
+                    ? 'Reminder berhasil dibuat dan notifikasi kontrak telah ditambahkan.'
+                    : 'Gagal mengirim reminder.');
+                feedback.className = `small mt-1 text-${success ? 'success' : 'danger'}`;
+                if (success && typeof window.refreshNotificationCount === 'function') {
+                    window.refreshNotificationCount();
+                }
+            } catch (error) {
+                feedback.textContent = 'Tidak dapat menghubungi server. Silakan coba lagi.';
+                feedback.className = 'small mt-1 text-danger';
+                console.error(error);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalContent;
             }
-
-            const item = document.createElement('div');
-            item.className = 'list-group-item px-0';
-            item.id = 'notification-' + notification.id;
-
-            const date = new Date(notification.created_at || Date.now());
-            const dateStr = date.toLocaleDateString('en-GB').replace(/\//g, '/');
-
-            const status = (notification.data && notification.data.sent) ? 'Terkirim' : 'Queued';
-
-            item.innerHTML = `
-                <div class="d-flex w-100 justify-content-between">
-                    <small>${escapeHtml(notification.message)}</small>
-                    <small class="text-muted">${dateStr}</small>
-                </div>
-                <div class="mt-1"><small id="notification-status-${notification.id}" class="text-muted">${status}</small></div>
-            `;
-
-            // Prepend
-            if (list.firstChild) list.insertBefore(item, list.firstChild);
-            else list.appendChild(item);
-        }
-
-        function escapeHtml(unsafe) {
-            return String(unsafe)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        // Poll notification status endpoint until sent_date appears or max attempts reached
-        function pollNotificationStatus(notificationId, attempts = 0) {
-            const maxAttempts = 20;
-            const intervalMs = 3000;
-
-            if (attempts >= maxAttempts) {
-                const statusEl = document.getElementById('notification-status-' + notificationId);
-                if (statusEl) statusEl.textContent = 'Gagal (timeout)';
-                return;
-            }
-
-            // Build status URL template
-            const urlTemplate = "<?php echo e(route('notifications.status', 'NOTIF_ID')); ?>";
-            const url = urlTemplate.replace('NOTIF_ID', notificationId);
-
-            fetch(url, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => res.json())
-                .then(json => {
-                    if (!json.success) throw new Error('No data');
-
-                    const statusEl = document.getElementById('notification-status-' + notificationId);
-                    if (json.sent_date || (json.data && json.data.sent)) {
-                        if (statusEl) statusEl.textContent = 'Terkirim';
-                        // Optionally update timestamp shown
-                        const item = document.getElementById('notification-' + notificationId);
-                        if (item) {
-                            const smalls = item.querySelectorAll('.text-muted');
-                            if (smalls && smalls[0]) smalls[0].textContent = (new Date(json.sent_date || json
-                                .created_at)).toLocaleDateString('en-GB').replace(/\//g, '/');
-                        }
-                    } else if (json.data && json.data.error) {
-                        if (statusEl) statusEl.textContent = 'Gagal: ' + json.data.error;
-                    } else {
-                        // Not yet sent, retry
-                        setTimeout(() => pollNotificationStatus(notificationId, attempts + 1), intervalMs);
-                    }
-                })
-                .catch(err => {
-                    // network or server error -> retry a few times
-                    setTimeout(() => pollNotificationStatus(notificationId, attempts + 1), intervalMs);
-                });
-        }
+        });
 
         function extendContract() {
             const modalEl = document.getElementById('extendContractModal');

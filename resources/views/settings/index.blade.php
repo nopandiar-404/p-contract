@@ -501,10 +501,6 @@
                     <i class="fas fa-lock"></i>
                     <span>Keamanan</span>
                 </a>
-                                <a href="#gmail" class="settings-menu-item" data-section="gmail">
-                    <i class="fab fa-google" style="color: #ea4335;"></i>
-                    <span>Gmail API</span>
-                </a>
                 <a href="#about" class="settings-menu-item" data-section="about">
                     <i class="fas fa-info-circle"></i>
                     <span>Tentang</span>
@@ -609,18 +605,6 @@
                                 </div>
                             </div>
 
-                            <div class="notification-card">
-                                <div class="info">
-                                    <h5>Notifikasi WhatsApp</h5>
-                                    <p>Terima reminder melalui WhatsApp Business API</p>
-                                </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="notifWhatsapp"
-                                        name="notifications_whatsapp"
-                                        {{ session('notifications_whatsapp', false) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="notifWhatsapp"></label>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="settings-group">
@@ -848,161 +832,7 @@
                     </div>
                 </div>
 
-                <!-- Gmail API & Push Notification Settings -->
-                <div class="settings-section" id="gmail-section">
-                    <h3><i class="fab fa-google" style="color: #ea4335;"></i> Pengaturan Gmail API & Push Notifications</h3>
 
-                    <!-- Status Overview Card -->
-                    <div class="settings-group">
-                        <h4>Status Integrasi</h4>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="p-3 rounded border {{ !empty($gmailCreds['refresh_token']) ? 'bg-success-subtle border-success' : 'bg-warning-subtle border-warning' }}">
-                                    <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <span class="fw-bold">Status OAuth 2.0</span>
-                                        @if(!empty($gmailCreds['refresh_token']))
-                                            <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Terhubung</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i> Belum Terhubung</span>
-                                        @endif
-                                    </div>
-                                    <small class="text-muted d-block mb-3">
-                                        @if(!empty($gmailCreds['refresh_token']))
-                                            Akun Gmail siap digunakan untuk mengirim reminder dan menerima balasan.
-                                        @else
-                                            Lengkapi Client ID & Secret lalu klik tombol "Hubungkan Akun Google".
-                                        @endif
-                                    </small>
-                                    @if(empty($gmailCreds['refresh_token']))
-                                        <a href="{{ route('gmail.oauth') }}" class="btn btn-sm btn-danger">
-                                            <i class="fab fa-google me-1"></i> Hubungkan Akun Google
-                                        </a>
-                                    @else
-                                        <a href="{{ route('gmail.oauth') }}" class="btn btn-sm btn-outline-secondary">
-                                            <i class="fas fa-sync-alt me-1"></i> Otorisasi Ulang Google
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 rounded border {{ !empty($gmailWatch['active']) ? 'bg-info-subtle border-info' : 'bg-light border-secondary-subtle' }}">
-                                    <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <span class="fw-bold">Gmail Watch (Pub/Sub)</span>
-                                        @if(!empty($gmailWatch['active']))
-                                            <span class="badge bg-info text-dark"><i class="fas fa-broadcast-tower me-1"></i> Aktif</span>
-                                        @else
-                                            <span class="badge bg-secondary"><i class="fas fa-pause-circle me-1"></i> Tidak Aktif</span>
-                                        @endif
-                                    </div>
-                                    <small class="text-muted d-block mb-3">
-                                        @if(!empty($gmailWatch['active']))
-                                            Kedaluwarsa: {{ $gmailWatch['expiration'] ? date('d M Y H:i', (int)($gmailWatch['expiration'] / 1000)) : '-' }}
-                                        @else
-                                            Memerlukan Google Cloud Pub/Sub Topic untuk menerima push notifikasi otomatis.
-                                        @endif
-                                    </small>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-primary" id="btnTriggerWatch">
-                                            <i class="fas fa-play me-1"></i> Aktifkan Watch
-                                        </button>
-                                        @if(!empty($gmailWatch['active']))
-                                            <button type="button" class="btn btn-outline-danger" id="btnStopWatch">
-                                                <i class="fas fa-stop me-1"></i> Hentikan
-                                            </button>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Webhook URL Card -->
-                    <div class="settings-group">
-                        <h4>URL Webhook Cloud Pub/Sub</h4>
-                        <p class="text-muted small mb-2">Masukkan URL ini di Google Cloud Console pada push subscription Pub/Sub Anda:</p>
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light font-monospace" id="gmailWebhookUrl" value="{{ url('/api/gmail/webhook') }}" readonly>
-                            <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('gmailWebhookUrl').value); alert('URL Webhook berhasil disalin!');">
-                                <i class="fas fa-copy me-1"></i> Salin URL
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Form Konfigurasi -->
-                    <div class="settings-group">
-                        <h4>Konfigurasi Kredensial (.env)</h4>
-                        <form action="{{ route('settings.gmail.update') }}" method="POST">
-                            @csrf
-                            @method('PUT')
-
-                            <div class="form-group mb-3">
-                                <label for="gmail_client_id">Google Client ID <span class="text-danger">*</span></label>
-                                <input type="text" name="gmail_client_id" id="gmail_client_id" class="form-control font-monospace" value="{{ old('gmail_client_id', $gmailCreds['client_id'] ?? '') }}" placeholder="xxxxx-xxxxxxx.apps.googleusercontent.com">
-                                <small class="text-muted">Didapatkan dari Google Cloud Console &gt; Credentials &gt; OAuth 2.0 Client ID (Web Application).</small>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="gmail_client_secret">Google Client Secret <span class="text-danger">*</span></label>
-                                <input type="password" name="gmail_client_secret" id="gmail_client_secret" class="form-control font-monospace" value="{{ old('gmail_client_secret', $gmailCreds['client_secret'] ?? '') }}" placeholder="GOCSPX-xxxxxxxxxxxxxxxx">
-                                <small class="text-muted">Rahasia klien Google OAuth.</small>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="gmail_refresh_token">Refresh Token</label>
-                                <div class="input-group">
-                                    <input type="text" name="gmail_refresh_token" id="gmail_refresh_token" class="form-control font-monospace" value="{{ old('gmail_refresh_token', $gmailCreds['refresh_token'] ?? '') }}" placeholder="Otomatis terisi setelah login Google">
-                                    @if(empty($gmailCreds['refresh_token']))
-                                        <a href="{{ route('gmail.oauth') }}" class="btn btn-outline-danger">
-                                            <i class="fab fa-google me-1"></i> Otorisasi Sekarang
-                                        </a>
-                                    @endif
-                                </div>
-                                <small class="text-muted">Refresh token disimpan otomatis saat Anda mengklik tombol "Hubungkan Akun Google".</small>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="gmail_pubsub_topic">Cloud Pub/Sub Topic Name</label>
-                                <input type="text" name="gmail_pubsub_topic" id="gmail_pubsub_topic" class="form-control font-monospace" value="{{ old('gmail_pubsub_topic', $gmailCreds['topic_name'] ?? 'projects/myproject/topics/mytopic') }}" placeholder="projects/YOUR_PROJECT_ID/topics/YOUR_TOPIC">
-                                <small class="text-muted">Topik Google Cloud Pub/Sub untuk fitur push notifications / webhook.</small>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label for="gmail_from_email">Email Pengirim Default</label>
-                                        <input type="email" name="gmail_from_email" id="gmail_from_email" class="form-control" value="{{ old('gmail_from_email', $gmailCreds['from_email'] ?? 'nopandi4r@gmail.com') }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label for="gmail_from_name">Nama Pengirim</label>
-                                        <input type="text" name="gmail_from_name" id="gmail_from_name" class="form-control" value="{{ old('gmail_from_name', $gmailCreds['from_name'] ?? 'Pelindo E-Contract') }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-1"></i> Simpan Konfigurasi
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Petunjuk Pengaturan Google Cloud Console -->
-                    <div class="settings-group">
-                        <h4>Panduan Pengaturan Google Cloud Console</h4>
-                        <ol class="text-muted small ps-3 mb-0" style="line-height: 1.8;">
-                            <li>Buka <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a> dan buat atau pilih project.</li>
-                            <li>Aktifkan <strong>Gmail API</strong> dan <strong>Cloud Pub/Sub API</strong> di menu <em>APIs & Services &gt; Library</em>.</li>
-                            <li>Buka menu <em>OAuth consent screen</em>, pilih User Type, dan tambahkan scope <code>https://www.googleapis.com/auth/gmail.send</code> serta <code>https://www.googleapis.com/auth/gmail.readonly</code>.</li>
-                            <li>Buka menu <em>Credentials &gt; Create Credentials &gt; OAuth client ID</em>, pilih tipe <strong>Web application</strong>.</li>
-                            <li>Di bagian <strong>Authorized redirect URIs</strong>, tambahkan: <code>{{ route('gmail.callback') }}</code></li>
-                            <li>Salin <strong>Client ID</strong> dan <strong>Client Secret</strong> ke formulir di atas, lalu simpan.</li>
-                            <li>Klik tombol <strong>Hubungkan Akun Google</strong> untuk menyelesaikan otorisasi OAuth.</li>
-                        </ol>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1064,63 +894,11 @@
     </style>
 
     <script>
-        // Auto-activate section from URL hash (e.g. #gmail)
+        // Auto-activate section from URL hash.
         const initialHash = window.location.hash.replace('#', '');
         if (initialHash) {
             activateSection(initialHash);
         }
-
-        // Watch button handlers
-        document.getElementById('btnTriggerWatch')?.addEventListener('click', async function () {
-            if (!confirm('Aktifkan Gmail Watch ke Cloud Pub/Sub?')) return;
-            const btn = this;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Mengaktifkan...';
-            try {
-                const res = await fetch('{{ route('gmail.watch') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                    }
-                });
-                const data = await res.json();
-                if (data.success) {
-                    alert('Gmail watch berhasil diaktifkan!\nExpiration: ' + (data.expiration_formatted || '-'));
-                    window.location.reload();
-                } else {
-                    alert('Gagal: ' + (data.message || 'Terjadi kesalahan.'));
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-play me-1"></i> Aktifkan Watch';
-                }
-            } catch (e) {
-                alert('Gagal menghubungi server.');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-play me-1"></i> Aktifkan Watch';
-            }
-        });
-
-        document.getElementById('btnStopWatch')?.addEventListener('click', async function () {
-            if (!confirm('Hentikan Gmail Watch?')) return;
-            const btn = this;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menghentikan...';
-            try {
-                const res = await fetch('{{ route('gmail.stop') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                    }
-                });
-                const data = await res.json();
-                alert(data.message || 'Selesai');
-                window.location.reload();
-            } catch (e) {
-                alert('Gagal menghubungi server.');
-                btn.disabled = false;
-            }
-        });
 
         // Menu navigation
         document.querySelectorAll('.settings-menu-item').forEach(item => {

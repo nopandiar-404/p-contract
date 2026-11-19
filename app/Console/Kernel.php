@@ -16,14 +16,13 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\SaveExportCommand::class,
         \App\Console\Commands\SendContractNotifications::class,
-        \App\Console\Commands\WhatsAppHealthCheck::class,
     ];
 
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('notifications:contracts')->dailyAt('09:00');
 
-        // Call ContractNotificationService to check and send WhatsApp reminders
+        // Create internal contract notifications and send configured email reminders.
         $schedule->call(function () {
             (new \App\Services\ContractNotificationService())->checkAndSendNotifications();
         })->dailyAt('08:30')->withoutOverlapping();

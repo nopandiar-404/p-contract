@@ -6,7 +6,6 @@ use App\Models\Contract;
 use App\Models\Client;
 use App\Models\ContractNotification;
 use App\Models\ContractAudit;
-use App\Jobs\SendWhatsAppMessage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Mail;
@@ -28,7 +26,6 @@ class ContractController extends Controller
     public function __construct()
     {
         // $this->middleware('auth');
-        // Middleware untuk proteksi route
         // $this->middleware('can:manage-contracts')->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
 
@@ -1616,7 +1613,7 @@ class ContractController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            // Create a renewal notification record and dispatch WhatsApp if configured
+            // Create an in-app renewal notification.
             try {
                 ContractNotification::createRenewalNotification($contract, $oldEnd, $contract->end_date ? $contract->end_date->toDateString() : null, $validated['note'] ?? null);
             } catch (\Exception $e) {
@@ -1709,22 +1706,10 @@ class ContractController extends Controller
     }
 
     /**
-     * Send reminder to client via WhatsApp (WhatsApp Cloud API)
+     * Create an in-app contract reminder and optionally send its email.
      */
     public function sendReminder(Request $request, Contract $contract)
     {
-        $client = $contract->client;
-
-        if (!$client) {
-            return response()->json(['success' => false, 'message' => 'Client tidak ditemukan.'], 404);
-        }
-
-        $to = $client->pic_phone ?? $client->phone ?? null;
-
-        if (!$to) {
-            return response()->json(['success' => false, 'message' => 'Nomor telepon klien tidak tersedia.'], 400);
-        }
-
         $message = sprintf(
             "Reminder: Kontrak %s (%s) akan berakhir pada %s. Mohon tindak lanjut.",
             $contract->contract_number,
@@ -1732,24 +1717,17 @@ class ContractController extends Controller
             $contract->end_date ? $contract->end_date->format('d/m/Y') : '-'
         );
 
-        $phoneId = config('services.whatsapp.phone_number_id') ?? env('WHATSAPP_PHONE_NUMBER_ID');
-        $accessToken = config('services.whatsapp.access_token') ?? env('WHATSAPP_ACCESS_TOKEN');
-        $apiUrl = config('services.whatsapp.api_url') ?? env('WHATSAPP_API_URL', 'https://graph.facebook.com');
-
-        if (empty($phoneId) && empty($apiUrl) && empty($accessToken)) {
-            return response()->json(['success' => false, 'message' => 'WhatsApp configuration is not set.'], 500);
-        }
-
         try {
-            $notification = $this->createReminderNotification($contract, $message, ['manual' => true, 'queued' => true]);
-
-            $toClean = preg_replace('/[^0-9]/', '', $to);
-            $uuid = (string) Str::uuid();
-
-            SendWhatsAppMessage::dispatch($toClean, 'text', ['text' => $message], $contract->id, $uuid)->onQueue('whatsapp');
+            $notification = $this->createReminderNotification($contract, $message, ['manual' => true]);
+            if (!$notification) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Notifikasi reminder kontrak gagal disimpan.',
+                ], 500);
+            }
 
             $emailResult = $this->dispatchReminderEmail($contract, $notification, $message);
-            $responseMessage = 'Reminder Kontrak berhasil dikirim.';
+            $responseMessage = 'Reminder kontrak berhasil dibuat sebagai notifikasi.';
 
             if (!empty($emailResult['warning'])) {
                 $responseMessage .= ' ' . $emailResult['warning'];
@@ -1763,8 +1741,11 @@ class ContractController extends Controller
                 'notification' => $notification
             ]);
         } catch (\Exception $e) {
-            Log::error('Gagal mengantri pengiriman reminder: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['success' => false, 'message' => 'Gagal mengantri pengiriman reminder: ' . $e->getMessage()], 500);
+            Log::error('Gagal membuat notifikasi reminder: ' . $e->getMessage(), [
+                'contract_id' => $contract->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['success' => false, 'message' => 'Gagal membuat notifikasi reminder: ' . $e->getMessage()], 500);
         }
     }
 
@@ -1814,7 +1795,7 @@ class ContractController extends Controller
                 'data' => array_merge($data, ['uuid' => $data['uuid'] ?? (string) Str::uuid()]),
             ]);
         } catch (\Exception $e) {
-            Log::warning('Failed to persist ContractNotification before queuing send', ['error' => $e->getMessage(), 'contract_id' => $contract->id]);
+            Log::warning('Failed to persist ContractNotification', ['error' => $e->getMessage(), 'contract_id' => $contract->id]);
             return null;
         }
     }
@@ -1839,156 +1820,6 @@ class ContractController extends Controller
     {
         $password = str_replace(' ', '', env('MAIL_PASSWORD', ''));
         return strlen($password) === 16;
-    }
-
-    /**
-     * Send reminder via Gmail API (OAuth2 access token flow).
-     *
-     * Uses the Gmail REST API:
-     *   POST https://www.googleapis.com/gmail/v1/users/me/messages/send
-     * with a raw RFC-2822 message encoded in base64url.
-     *
-     * Requires env vars: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN
-     */
-    /**
-     * Send reminder via Gmail API (OAuth2 access token flow) or SMTP fallback.
-     *
-     * Primary: Gmail REST API (POST https://www.googleapis.com/gmail/v1/users/me/messages/send)
-     * Fallback: Laravel Mail (SMTP)
-     */
-    public function sendGmailReminder(Request $request, Contract $contract)
-    {
-        $client = $contract->client;
-
-        if (!$client) {
-            return response()->json(['success' => false, 'message' => 'Client tidak ditemukan.'], 404);
-        }
-
-        $toEmail = $client->pic_email ?? $client->email ?? null;
-
-        if (!$toEmail) {
-            return response()->json(['success' => false, 'message' => 'Alamat email client tidak tersedia.'], 400);
-        }
-
-        $subject = sprintf('Reminder: Kontrak %s akan berakhir', $contract->contract_number);
-
-        $reminderMessage = sprintf(
-            "Reminder: Kontrak %s (%s) akan berakhir pada %s. Mohon tindak lanjut.",
-            $contract->contract_number,
-            $contract->contract_name,
-            $contract->end_date ? $contract->end_date->format('d/m/Y') : '-'
-        );
-
-        $downloadLink = URL::temporarySignedRoute(
-            'contracts.download-pdf.scan',
-            now()->addHours(6),
-            ['contract' => $contract->id]
-        );
-
-        $htmlBody = sprintf(
-            '<p>%s</p><p>Download dokumen kontrak: <a href="%s">Klik di sini</a></p>' .
-            '<p>Detail kontrak:</p><ul>' .
-            '<li>Nomor Kontrak: %s</li>' .
-            '<li>Nama Kontrak: %s</li>' .
-            '<li>Tanggal Berakhir: %s</li>' .
-            '<li>Status: %s</li>' .
-            '</ul>',
-            e($reminderMessage),
-            $downloadLink,
-            e($contract->contract_number),
-            e($contract->contract_name),
-            $contract->end_date ? $contract->end_date->format('d F Y') : '-',
-            e(ucfirst(str_replace('_', ' ', $contract->status)))
-        );
-
-        // 1. Coba kirim via Gmail REST API jika kredensial OAuth tersedia
-        $accessToken = \App\Services\GmailService::getAccessToken();
-
-        if ($accessToken) {
-            try {
-                $creds       = \App\Services\GmailService::getCredentials();
-                $fromAddress = $creds['from_email'] ?: env('MAIL_FROM_ADDRESS', 'noreply@example.com');
-                $fromName    = $creds['from_name'] ?: env('MAIL_FROM_NAME', 'Pelindo E-Contract');
-
-                $boundary  = '----=_NextPart_' . md5(uniqid((string) rand(), true));
-                $rawEmail  = "From: {$fromName} <{$fromAddress}>\r\n";
-                $rawEmail .= "To: {$toEmail}\r\n";
-                $rawEmail .= "Subject: {$subject}\r\n";
-                $rawEmail .= "MIME-Version: 1.0\r\n";
-                $rawEmail .= "Content-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n\r\n";
-                $rawEmail .= "--{$boundary}\r\n";
-                $rawEmail .= "Content-Type: text/plain; charset=UTF-8\r\n\r\n";
-                $rawEmail .= strip_tags($reminderMessage) . "\r\n\r\nDownload: {$downloadLink}\r\n\r\n";
-                $rawEmail .= "--{$boundary}\r\n";
-                $rawEmail .= "Content-Type: text/html; charset=UTF-8\r\n\r\n";
-                $rawEmail .= $htmlBody . "\r\n\r\n";
-                $rawEmail .= "--{$boundary}--";
-
-                $encodedMessage = \App\Services\GmailService::encodeBase64Url($rawEmail);
-
-                $sendResponse = Http::withToken($accessToken)
-                    ->timeout(20)
-                    ->post('https://www.googleapis.com/gmail/v1/users/me/messages/send', [
-                        'raw' => $encodedMessage,
-                    ]);
-
-                if ($sendResponse->successful()) {
-                    $this->createReminderNotification($contract, $reminderMessage, [
-                        'channel'      => 'gmail_api',
-                        'to'           => $toEmail,
-                        'manual'       => true,
-                        'gmail_msg_id' => $sendResponse->json('id'),
-                    ]);
-
-                    Log::info('Gmail reminder sent successfully via Gmail API', [
-                        'contract_id'  => $contract->id,
-                        'to'           => $toEmail,
-                        'gmail_msg_id' => $sendResponse->json('id'),
-                    ]);
-
-                    return response()->json([
-                        'success' => true,
-                        'message' => "Reminder berhasil dikirim via Gmail API ke {$toEmail}.",
-                    ]);
-                }
-
-                Log::warning('Gmail API send gagal, mencoba fallback SMTP', ['response' => $sendResponse->body()]);
-            } catch (\Throwable $e) {
-                Log::warning('Gmail API send exception: ' . $e->getMessage() . ', mencoba fallback SMTP');
-            }
-        }
-
-        // 2. Fallback: Kirim via Laravel Mail (SMTP) jika Gmail API belum diotorisasi
-        if ($this->isSmtpConfigured()) {
-            try {
-                Mail::to($toEmail)->send(new ReminderMail($subject, $htmlBody));
-
-                $this->createReminderNotification($contract, $reminderMessage, [
-                    'channel' => 'smtp_fallback',
-                    'to'      => $toEmail,
-                    'manual'  => true,
-                ]);
-
-                Log::info('Gmail reminder sent via SMTP fallback', [
-                    'contract_id' => $contract->id,
-                    'to'          => $toEmail,
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => "Reminder berhasil dikirim ke {$toEmail} (menggunakan SMTP Gmail).",
-                ]);
-            } catch (\Throwable $smtpError) {
-                Log::error('SMTP fallback failed: ' . $smtpError->getMessage());
-            }
-        }
-
-        // 3. Jika kedua metode belum dikonfigurasi
-        return response()->json([
-            'success'      => false,
-            'message'      => 'Konfigurasi Gmail API belum lengkap. Harap atur GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, dan lakukan otorisasi di menu Pengaturan > Gmail API.',
-            'settings_url' => route('settings.index') . '#gmail',
-        ], 503);
     }
 
     public function checkContractNumber(Request $request)
