@@ -1479,9 +1479,12 @@
             feedback.className = 'small';
 
             try {
+                const controller = new AbortController();
+                const timeoutId = window.setTimeout(() => controller.abort(), 8000);
                 const response = await fetch(button.dataset.reminderUrl, {
                     method: 'POST',
                     credentials: 'same-origin',
+                    signal: controller.signal,
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         'Accept': 'application/json',
@@ -1489,6 +1492,7 @@
                     },
                     body: JSON.stringify({}),
                 });
+                window.clearTimeout(timeoutId);
                 const result = await response.json().catch(() => ({}));
                 const success = response.ok && result.success === true;
 
@@ -1500,7 +1504,9 @@
                     window.refreshNotificationCount();
                 }
             } catch (error) {
-                feedback.textContent = 'Tidak dapat menghubungi server. Silakan coba lagi.';
+                feedback.textContent = error.name === 'AbortError'
+                    ? 'Permintaan terlalu lama. Periksa hasilnya lalu coba lagi.'
+                    : 'Tidak dapat menghubungi server. Silakan coba lagi.';
                 feedback.className = 'small mt-1 text-danger';
                 console.error(error);
             } finally {

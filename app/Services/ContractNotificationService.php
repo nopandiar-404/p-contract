@@ -11,6 +11,28 @@ class ContractNotificationService
 {
     private $notificationDays = [60, 30, 15, 7, 3, 1];
 
+    private function updateContractStatuses(Carbon $today): void
+    {
+        Contract::active()
+            ->whereDate('end_date', '<=', $today)
+            ->update([
+                'status' => 'grace_period',
+                'updated_at' => now(),
+            ]);
+
+        Contract::inGracePeriod()
+            ->get()
+            ->each(function (Contract $contract) use ($today) {
+                $gracePeriodEnd = $contract->grace_period_end_date;
+                if ($gracePeriodEnd && $gracePeriodEnd->lte($today)) {
+                    $contract->update([
+                        'status' => 'expired',
+                        'updated_at' => now(),
+                    ]);
+                }
+            });
+    }
+
     public function checkAndSendNotifications()
     {
         $today = Carbon::today();
@@ -22,6 +44,8 @@ class ContractNotificationService
         ];
 
         try {
+            $this->updateContractStatuses($today);
+
             // 1. Cek kontrak yang akan berakhir
             foreach ($this->notificationDays as $daysBefore) {
                 $targetDate = $today->copy()->addDays($daysBefore);
@@ -45,13 +69,9 @@ class ContractNotificationService
                 try {
                     $remainingDays = $contract->remaining_grace_period_days;
                     if ($remainingDays !== null) {
-                        if ($remainingDays <= 3) {
-                            $this->createGracePeriodNotification($contract);
+                        if (in_array($remainingDays, [30, 15, 7, 3, 1, 0], true)) {
+                            $this->createGracePeriodNotification($contract, $remainingDays);
                             $results['grace_period']++;
-                        }
-                        if ($remainingDays >= 14 && $remainingDays <= 16) {
-                            $this->sendGracePeriodEmail($contract);
-                            $results['grace_period_email'] = ($results['grace_period_email'] ?? 0) + 1;
                         }
                     }
                 } catch (\Exception $e) {
@@ -59,9 +79,9 @@ class ContractNotificationService
                 }
             }
 
-            // 3. Cek kontrak yang expired hari ini
+            // 3. Buat satu notifikasi saat masa tenggang berakhir
             $expiredContracts = Contract::where('status', 'expired')
-                ->whereDate('end_date', $today)
+                ->whereDate('updated_at', $today)
                 ->get();
 
             foreach ($expiredContracts as $contract) {
@@ -90,7 +110,7 @@ class ContractNotificationService
         return ContractNotification::createExpiryNotification($contract, $daysBefore);
     }
 
-    private function createGracePeriodNotification(Contract $contract)
+    private function createGracePeriodNotification(Contract $contract, ?int $remainingDays = null)
     {
         $existing = ContractNotification::where('contract_id', $contract->id)
             ->where('type', ContractNotification::TYPE_GRACE_PERIOD)
@@ -98,12 +118,26 @@ class ContractNotificationService
             ->first();
 
         if (!$existing) {
-            ContractNotification::createGracePeriodNotification($contract);
+            $notification = ContractNotification::createGracePeriodNotification($contract);
+            if ($remainingDays !== null) {
+                $data = $notification->data ?? [];
+                $data['remaining_grace_days'] = $remainingDays;
+                $notification->update(['data' => $data]);
+            }
         }
     }
 
     private function createExpiredNotification(Contract $contract)
     {
+        $existing = ContractNotification::where('contract_id', $contract->id)
+            ->whereIn('type', ['contract_expired', 'status_change'])
+            ->whereDate('sent_date', Carbon::today())
+            ->first();
+
+        if ($existing) {
+            return $existing;
+        }
+
         ContractNotification::createStatusChangeNotification(
             $contract,
             'active',

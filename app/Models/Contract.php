@@ -187,8 +187,8 @@ class Contract extends Model
         try {
             if (!$this->end_date) return 0;
             $gracePeriodEnd = Carbon::parse($this->end_date)->addDays($this->grace_period_days ?? 30);
-            $remainingDays  = Carbon::now()->diffInDays($gracePeriodEnd, false);
-            return max(0, $remainingDays);
+            $remainingDays  = Carbon::today()->diffInDays($gracePeriodEnd->startOfDay(), false);
+            return max(0, (int) round($remainingDays));
         } catch (\Exception $e) {
             return 0;
         }

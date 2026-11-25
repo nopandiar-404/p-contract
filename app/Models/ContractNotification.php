@@ -115,6 +115,7 @@ class ContractNotification extends Model
             'type' => self::TYPE_STATUS_CHANGE,
             'message' => $message,
             'is_read' => false,
+            'sent_date' => now(),
             'data' => [
                 'from' => $fromStatus,
                 'to' => $toStatus,

@@ -839,12 +839,39 @@
             function sendReminder(contractId) {
                 if (confirm('Kirim reminder untuk kontrak ini?')) {
                     showLoading('Mengirim reminder...');
+                    const url = '<?php echo e(route("contracts.send-reminder", ["contract" => "__CONTRACT_ID__"])); ?>'
+                        .replace('__CONTRACT_ID__', encodeURIComponent(contractId));
 
-                    // Simulate API call
-                    setTimeout(() => {
+                    const controller = new AbortController();
+                    const timeoutId = window.setTimeout(() => controller.abort(), 8000);
+
+                    fetch(url, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        signal: controller.signal,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(async response => {
+                        window.clearTimeout(timeoutId);
+                        const result = await response.json().catch(() => ({}));
                         hideLoading();
-                        showToast('Reminder berhasil dikirim', 'success');
-                    }, 1000);
+                        showToast(
+                            result.message || (response.ok ? 'Reminder berhasil dikirim.' : 'Gagal mengirim reminder.'),
+                            response.ok && result.success ? 'success' : 'error'
+                        );
+                    })
+                    .catch(error => {
+                        window.clearTimeout(timeoutId);
+                        hideLoading();
+                        showToast(error.name === 'AbortError'
+                            ? 'Permintaan terlalu lama. Periksa hasilnya lalu coba lagi.'
+                            : 'Gagal mengirim reminder. Periksa koneksi lalu coba lagi.', 'error');
+                    });
                 }
             }
 

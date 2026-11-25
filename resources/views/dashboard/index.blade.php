@@ -1171,9 +1171,12 @@
                     showLoading('Mengirim reminder...');
 
                     try {
+                        const controller = new AbortController();
+                        const timeoutId = window.setTimeout(() => controller.abort(), 8000);
                         const response = await fetch(this.dataset.reminderUrl, {
                             method: 'POST',
                             credentials: 'same-origin',
+                            signal: controller.signal,
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                                 'Accept': 'application/json',
@@ -1181,10 +1184,13 @@
                             },
                             body: JSON.stringify({})
                         });
+                        window.clearTimeout(timeoutId);
                         const result = await response.json().catch(() => ({}));
                         showToast(result.message || (response.ok ? 'Reminder berhasil dikirim.' : 'Gagal mengirim reminder.'), response.ok && result.success ? 'success' : 'error');
                     } catch (error) {
-                        showToast('Gagal mengirim reminder. Periksa koneksi lalu coba lagi.', 'error');
+                        showToast(error.name === 'AbortError'
+                            ? 'Permintaan terlalu lama. Periksa hasilnya lalu coba lagi.'
+                            : 'Gagal mengirim reminder. Periksa koneksi lalu coba lagi.', 'error');
                     } finally {
                         hideLoading();
                         this.disabled = false;

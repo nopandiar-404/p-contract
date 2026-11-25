@@ -1710,6 +1710,42 @@ class ContractController extends Controller
      */
     public function sendReminder(Request $request, Contract $contract)
     {
+        $user = $request->user();
+        if ($user && $user->role !== 'admin' && (int) $contract->created_by !== (int) $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki akses untuk mengirim reminder kontrak ini.',
+            ], 403);
+        }
+
+        if (!in_array($contract->status, ['active', 'grace_period'], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Reminder hanya dapat dikirim untuk kontrak aktif atau masa tenggang.',
+            ], 422);
+        }
+
+        if (!$contract->end_date) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tanggal berakhir kontrak belum ditetapkan.',
+            ], 422);
+        }
+
+        $existingReminder = $contract->notifications()
+            ->where('type', ContractNotification::TYPE_EXPIRY)
+            ->where('created_at', '>=', now()->subMinutes(5))
+            ->latest()
+            ->first();
+
+        if ($existingReminder && ($existingReminder->data['manual'] ?? false) === true) {
+            return response()->json([
+                'success' => false,
+                'duplicate' => true,
+                'message' => 'Reminder untuk kontrak ini baru saja dikirim. Tunggu beberapa saat sebelum mengirim lagi.',
+            ], 409);
+        }
+
         $message = sprintf(
             "Reminder: Kontrak %s (%s) akan berakhir pada %s. Mohon tindak lanjut.",
             $contract->contract_number,
@@ -1765,7 +1801,7 @@ class ContractController extends Controller
     private function dispatchReminderEmail(Contract $contract, ?ContractNotification $notification, string $message): array
     {
         $clientEmail = $contract->client->email ?? null;
-        if (!$clientEmail) {
+        if (!is_string($clientEmail) || !filter_var($clientEmail, FILTER_VALIDATE_EMAIL)) {
             return ['warning' => ''];
         }
 
@@ -1777,8 +1813,16 @@ class ContractController extends Controller
                 return ['warning' => ''];
             }
 
-            Mail::to($clientEmail)->queue(new ReminderMail($emailSubject, $emailBody));
-            return ['success' => ''];
+            try {
+                Mail::to($clientEmail)->queue(new ReminderMail($emailSubject, $emailBody));
+                return ['success' => 'Email reminder telah dikirim ke klien.'];
+            } catch (\Throwable $e) {
+                Log::warning('Gagal mengirim email reminder', [
+                    'contract_id' => $contract->id,
+                    'error' => $e->getMessage(),
+                ]);
+                return ['warning' => 'Email belum dapat dikirim, tetapi notifikasi aplikasi berhasil dibuat.'];
+            }
         }
 
         return ['warning' => ''];
@@ -1792,6 +1836,7 @@ class ContractController extends Controller
                 'type' => ContractNotification::TYPE_EXPIRY,
                 'message' => $message,
                 'is_read' => false,
+                'sent_date' => now(),
                 'data' => array_merge($data, ['uuid' => $data['uuid'] ?? (string) Str::uuid()]),
             ]);
         } catch (\Exception $e) {
